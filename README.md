@@ -14,8 +14,8 @@ UI/UX guide.
 ## Install
 
 ```bash
-git clone https://github.com/tamaskis9211-jpg/agent_guidelines
-cd agent_guidelines && ./install.sh
+git clone https://github.com/tamaskis9211-jpg/AGENT_GUIDELINES
+cd AGENT_GUIDELINES && ./install.sh
 ```
 
 The script copies `claude/` into `~/.claude/` (Claude Code's user-level
