@@ -134,6 +134,19 @@ How to use it:
 - **Account and data deletion** that users can do themselves (required by
   the app stores for apps with accounts); `SECURITY.md` §12.
 - **Store forms** (data safety, privacy labels) match the policy.
+- **Other products' names and looks:** a product may work *like* another
+  (game rules and features are not owned), but never uses its name, logo,
+  content, code or distinctive look (signature colours, layout), not even
+  "like X" in the store listing. Put a name check in the tests where the
+  texts live.
+- **Third-party assets and data:** every font, icon, sound, image, word list
+  or dataset has a licence that allows commercial use (no NC or ND, nothing
+  scraped without one), is credited in the product, and share-alike or
+  copyleft data (CC BY-SA, MPL, GPL) stays under its licence, with its
+  source available. Keep an audit table per product and check every new
+  asset against it.
+- **A lawyer check** of the store listing, names and licences before the
+  first paid release.
 
 ## 10. Docs — always
 
