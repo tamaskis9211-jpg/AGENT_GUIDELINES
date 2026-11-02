@@ -122,7 +122,8 @@ How to use it:
 - **Buttons say what they do** ("Save word", "Send code"), not "OK" or
   "Submit".
 - **States for every control:** default, pressed, focused, disabled,
-  loading.
+  loading, and hover on the web.
+- **Codes and links people pass on** get a copy or share button.
 - **Destructive actions:**
   - offer undo where possible;
   - otherwise ask for confirmation, naming what will be lost;
@@ -139,6 +140,7 @@ How to use it:
 ## 6. Forms and input — when there are inputs
 
 - A visible label for every field (a placeholder is not a label).
+- Password fields have a show/hide button.
 - Ask only for what's needed; mark optional fields, not required ones.
 - The right keyboard type, autofill and autocomplete hints, sensible
   autocapitalisation.
@@ -183,7 +185,7 @@ How to use it:
   without cut-off or overlapping text.
 - **Keyboard (web):** everything is reachable and usable by keyboard, with a
   visible focus ring, a logical focus order, and no focus traps. Dialogs
-  move focus in and return it.
+  move focus in and return it. Pages start with a "skip to content" link.
 - **Changes are announced:** dynamic changes (toasts, errors, results) reach
   screen readers through live regions or announcements.
 - **Motion:** respect Reduce Motion; nothing flashes more than 3 times a

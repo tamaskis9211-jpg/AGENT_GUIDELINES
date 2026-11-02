@@ -128,7 +128,15 @@ How to use it:
 ## 9. Legal and privacy — when there are users
 
 - **A privacy policy** that matches what the code really does, and **terms**
-  (required by the app stores and most payment providers).
+  (required by the app stores and most payment providers). Both show a
+  "last updated" date.
+- **Refunds:** say who handles them and how (for store purchases, Google and
+  Apple; the listing and the terms say so).
+- **Business details:** the developer's name, contact and address where the
+  store or the law asks (Play for paid apps; the EU for traders).
+- **Children:** choose the target age on purpose. Under 13 (16 in parts of
+  the EU) brings parental consent and the stores' family rules; say the age
+  in the store forms.
 - **Cookie consent:** when non-essential cookies or trackers are set
   (EU/UK); none needed for strictly necessary cookies only.
 - **Account and data deletion** that users can do themselves (required by
@@ -145,6 +153,8 @@ How to use it:
   copyleft data (CC BY-SA, MPL, GPL) stays under its licence, with its
   source available. Keep an audit table per product and check every new
   asset against it.
+- **Honest listings:** no claim that can't be backed ("the best", "free"
+  when parts are paid), and no fake, bought or rewarded reviews or ratings.
 - **A lawyer check** of the store listing, names and licences before the
   first paid release.
 

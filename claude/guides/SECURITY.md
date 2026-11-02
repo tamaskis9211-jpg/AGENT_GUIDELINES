@@ -191,6 +191,8 @@ How to use it:
   requests.
 - The privacy policy and the store data-safety forms must match what the code
   actually sends and stores. Name every third party.
+- Audit every third-party SDK for what it collects on its own (device IDs,
+  analytics, crash data), turn off what isn't needed, and declare the rest.
 
 ## 13. Incidents — always
 
