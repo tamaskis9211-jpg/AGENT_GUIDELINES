@@ -72,6 +72,12 @@ when two rules here conflict.
   mode: only security-relevant code, see above.)
 - When the batch changes a screen, the reviewer also gets the screenshots
   of the worst case (`UI_UX.md` §15): it cannot see layout from code.
+- Keep reviews lean (they are the biggest cost after the session itself):
+  give the reviewer the diff and only the guide sections that apply, ask
+  for a short report, and review once per batch. Re-review fixes only when
+  they add logic or touch security; small fixes you check yourself.
+- Screenshots: look at the worst-case set; the normal-size set only when a
+  question needs it. Downscale tall ones before viewing.
 - Large, self-contained pieces of work (a data file, a new screen) may go
   to a subagent with an exact spec. The supervisor stays responsible: check
   its output against the spec and run the checks yourself. Small edits and
@@ -89,7 +95,10 @@ when two rules here conflict.
   chat. Update them in the same commit as the change they describe.
 - One source of truth per fact; other files link to it.
 - If a tool can enforce a rule (lint, test, script), put it there, not in prose.
-- Prefer one session per feature; long sessions lose detail.
+- Prefer one session per feature; long sessions lose detail and every step
+  re-sends the whole conversation, so cost grows with length. When a feature
+  is done, make sure the repo's open-items file says where things stand, and
+  tell the user it is a good point to start a new session.
 
 ## Reporting
 - End every piece of work with: what changed, what was checked, what was
