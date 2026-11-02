@@ -10,9 +10,9 @@ It holds the rules that apply to every project, not the code of one.
 
 ## In any session
 
-In a cloud environment set up with `setup/cloud-setup.sh` (its setup
-script, with this repo under Repositories) the guidelines are installed before
-the first message. Elsewhere:
+In a cloud environment whose setup script is `setup/cloud-setup.sh` (the
+repo is public: nothing to select) the guidelines are installed before the
+first message. Elsewhere:
 
 If `~/.claude/guides/` is missing or older than this repo's copy, run
 `./install.sh`. Then follow the installed `~/.claude/CLAUDE.md`. Cloud
@@ -49,3 +49,9 @@ session.
 - Take a skill only if it fits the projects' stack; note the ones left out
   and why. Project rules win over a skill's advice.
 - To update one, read the new version's diff before copying it in.
+
+## The repo is public
+
+- Never put anything personal, secret or project-specific here: names,
+  emails, keys, server addresses, app details. Those belong in a project's
+  own repo.
