@@ -13,11 +13,16 @@ How to use it:
 
 ## 1. Authorization — when there are users, records or shared resources
 
+- **On the server, always.** Every access check runs on the server. Hiding a
+  button, a screen or a route in the app is not access control.
 - **Object-level authorization (IDOR).** Every request that reads or changes a
   record checks that it belongs to the caller (or that the caller may act on
   it). Unguessable IDs (UUIDs) are not protection.
 - **Function-level authorization.** Every endpoint checks the caller's role,
   admin and "hidden" ones included. Nothing is safe because it is unlinked.
+- **Trim responses.** Return only the fields the caller needs, never a whole
+  record or model: no password hashes, internal flags, or other users'
+  emails and personal data hidden in a full object.
 - **Mass assignment.** Accept only the fields the client may set. Never pass
   the request body straight into a model (`role`, `isAdmin`, `price`,
   `ownerId`).
@@ -78,8 +83,9 @@ How to use it:
 ## 4. Secrets and keys — always
 
 - **No secrets in code, the repo or git history.** Run a secret scan before
-  pushing. If a secret was ever committed, rotate it; deleting it is not
-  enough.
+  pushing. If a secret was ever committed, rotate it first; deleting it is
+  not enough. Then purge it from history (`git filter-repo`), force-push, and
+  ask collaborators to re-clone.
 - **Nothing secret in a client.** Mobile bundles, browser JS and source maps
   can be read by anyone.
 - **"Public" client keys** (Firebase, Supabase anon, Maps) are public by
@@ -95,6 +101,9 @@ How to use it:
 
 - **Rate limiting** per IP and per account or key, on login, signup, reset,
   search, uploads, and every expensive or paid endpoint.
+- **Bot protection** (CAPTCHA, Cloudflare Turnstile) on signup, contact and
+  feedback forms and every public form that creates records or sends
+  something, not only on login.
 - **Paid sends (SMS pumping, email, push):** rate limits, daily caps, geo
   restrictions for SMS, CAPTCHA before sending. Attackers use these endpoints
   to run up your bill.
@@ -112,6 +121,10 @@ How to use it:
 - **Storage buckets** (S3, Supabase Storage, Firebase Storage): private by
   default; public only for files meant to be public; short-lived signed URLs
   for the rest; no listing.
+- **Encrypt sensitive data at rest:** sensitive fields (health data, ID
+  numbers, third-party tokens) are encrypted in the database, with the keys
+  outside it (the secret store or a KMS). Full-disk encryption alone doesn't
+  protect against a leaked query or dump.
 - **Backups:** automatic, encrypted, and a restore actually tested.
 
 ## 7. Web and HTTP — when serving pages or APIs to browsers
