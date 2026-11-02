@@ -122,6 +122,12 @@ user's decisions, not the agent's.
 ## Keeping a project manageable
 - Decisions, rules and open items live in files in the repo, never only in
   chat. Update them in the same commit as the change they describe.
+- Keep a human-readable `CHANGELOG.md` at the repo root: newest first, one
+  section per build or release that reaches testers or users, and
+  **Unreleased** on top. Write plain words, user-visible changes first,
+  then internal ones (docs, CI, tooling, tests, refactors) under their own
+  heading. Add the line in the same commit as the change. When a build
+  ships, rename Unreleased to its number and date.
 - One source of truth per fact; other files link to it.
 - If a tool can enforce a rule (lint, test, script), put it there, not in prose.
 - Prefer one session per feature; long sessions lose detail and every step
