@@ -29,9 +29,8 @@ when two rules here conflict.
 - Before changing anything, list every file the task touches and read them
   in one pass. Write the plan, then make all the edits, then run the checks
   once per finished batch (re-run only after fixing a failure).
-- New features and game rules start from a short brief (goal, how it ends
-  or what "done" is, scoring or behaviour, edge and abuse cases, a worked
-  example). Get the user's OK on the brief before building.
+- New apps, features and game rules start from a brief that the user
+  approves before anything is built (see the next section).
 - At a project's start (and before any major upgrade), check the current
   stable versions of the main framework and key libraries (measure it,
   e.g. `npm view <pkg> dist-tags` and release dates). Present the options
@@ -44,6 +43,36 @@ when two rules here conflict.
   is enough; `LAUNCH.md` only for the parts the user picks; the reviewer
   only for security-relevant code. `SECURITY.md` rules still apply to
   anything real users or real money touch.
+
+## Ask before deciding — when the user describes something new
+The user's plain description is not a full spec. The gaps in it are the
+user's decisions, not the agent's.
+- Before building, list every major decision the description leaves open,
+  for example: what it does and for whom, rules and scoring, scope (in and
+  out), screens and flow, the look, what data is kept or sent, free vs
+  paid, platforms, new libraries or services. Major means visible to the
+  user, hard to undo, or changing cost, scope, data, money or security.
+- Ask them all in one round (the question tool where there is one). Give
+  each 2–4 options with the trade-off, and mark a recommendation. Never
+  pick one and build it to show afterwards.
+- Small, reversible details: take the conventional default without asking,
+  and list each one in the brief under "Decided by the agent" so the user
+  can overrule it.
+- Write the result as a brief file in the repo (the project's template if
+  it has one): goal, what "done" is, behaviour or scoring, edge and abuse
+  cases, a worked example with real values, and each decision marked "user"
+  or "agent default".
+- Anything with a screen: show it before writing app code. Use a mockup
+  image or rendered page of each new or changed screen, with real-looking
+  content and the worst case (`UI_UX.md` §15). Get the user's OK on the
+  look along with the brief.
+- Build only after the user approves the brief (and mockups). A major
+  decision that comes up mid-build and is not in the brief: stop and ask.
+  Small ones: decide, and add them to the brief's "Decided by the agent".
+- When the user says "you decide" for an item, decide it, mark it "agent"
+  in the brief and the decisions file, and say so in the report.
+- Prototype mode: ask only the questions that change what gets built. Skip
+  mockups unless the user asks.
 
 ## The queue
 - Keep all work as a visible task list. New requests and corrections go to
@@ -93,6 +122,12 @@ when two rules here conflict.
 ## Keeping a project manageable
 - Decisions, rules and open items live in files in the repo, never only in
   chat. Update them in the same commit as the change they describe.
+- Keep a human-readable `CHANGELOG.md` at the repo root: newest first, one
+  section per build or release that reaches testers or users, and
+  **Unreleased** on top. Write plain words, user-visible changes first,
+  then internal ones (docs, CI, tooling, tests, refactors) under their own
+  heading. Add the line in the same commit as the change. When a build
+  ships, rename Unreleased to its number and date.
 - One source of truth per fact; other files link to it.
 - If a tool can enforce a rule (lint, test, script), put it there, not in prose.
 - Prefer one session per feature; long sessions lose detail and every step
