@@ -58,6 +58,11 @@ user's decisions, not the agent's.
 - Small, reversible details: take the conventional default without asking,
   and list each one in the brief under "Decided by the agent" so the user
   can overrule it.
+- Follow what the user already accepted elsewhere in the project: how a
+  sibling part shows feedback, its controls, colours and layouts. Departing
+  from it is a major decision, even for a small marker or icon detail.
+- This applies to fixes and small changes too, not only new features. When
+  a fix or request has more than one reasonable result, ask which one.
 - Write the result as a brief file in the repo (the project's template if
   it has one): goal, what "done" is, behaviour or scoring, edge and abuse
   cases, a worked example with real values, and each decision marked "user"
@@ -71,6 +76,8 @@ user's decisions, not the agent's.
   Small ones: decide, and add them to the brief's "Decided by the agent".
 - When the user says "you decide" for an item, decide it, mark it "agent"
   in the brief and the decisions file, and say so in the report.
+- Every report lists the choices made without asking, under "Decided by
+  the agent", so the user can overrule them before they ship.
 - Prototype mode: ask only the questions that change what gets built. Skip
   mockups unless the user asks.
 

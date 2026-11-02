@@ -251,6 +251,10 @@ How to use it:
 - Make it a tool, not a memory: a project script that renders every screen
   in those conditions, run on every screen change (the project's
   environment notes say which).
+- Look at every drawn image (app or game icon, mockup, illustration) at
+  full size and at the size it is shown (an icon at 48 px). Letters in a
+  row share one baseline and cap height (accents above it), and no mark
+  touches a glyph. Check by measuring the drawn pixels, not by eye alone.
 - A heuristic review with the checklist below.
 - Watch at least one real user try the main flow when you can; fix what
   confuses them first.
