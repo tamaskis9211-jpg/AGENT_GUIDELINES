@@ -14,6 +14,13 @@ when two rules here conflict.
   `~/.claude/guides/LAUNCH.md`.
 - Before building or changing any screen, page or flow: read
   `~/.claude/guides/UI_UX.md`.
+- When planning a product, adding a third-party asset or dataset, writing
+  store or marketing texts, and before a release: read
+  `~/.claude/guides/LEGAL.md`.
+- Skills in `~/.claude/skills/` come from the guidelines repo (its
+  `claude/skills/SOURCES.md`). Never install a skill with `npx skills add` or
+  another installer: copy only the files it needs, after reading them, into
+  that repo.
 - The reviewer subagent (below) gets `SECURITY.md` whenever the batch
   touches any of those areas, and `UI_UX.md` (its checklist) whenever the
   batch changes a screen.

@@ -127,36 +127,10 @@ How to use it:
 
 ## 9. Legal and privacy — when there are users
 
-- **A privacy policy** that matches what the code really does, and **terms**
-  (required by the app stores and most payment providers). Both show a
-  "last updated" date.
-- **Refunds:** say who handles them and how (for store purchases, Google and
-  Apple; the listing and the terms say so).
-- **Business details:** the developer's name, contact and address where the
-  store or the law asks (Play for paid apps; the EU for traders).
-- **Children:** choose the target age on purpose. Under 13 (16 in parts of
-  the EU) brings parental consent and the stores' family rules; say the age
-  in the store forms.
-- **Cookie consent:** when non-essential cookies or trackers are set
-  (EU/UK); none needed for strictly necessary cookies only.
-- **Account and data deletion** that users can do themselves (required by
-  the app stores for apps with accounts); `SECURITY.md` §12.
-- **Store forms** (data safety, privacy labels) match the policy.
-- **Other products' names and looks:** a product may work *like* another
-  (game rules and features are not owned), but never uses its name, logo,
-  content, code or distinctive look (signature colours, layout), not even
-  "like X" in the store listing. Put a name check in the tests where the
-  texts live.
-- **Third-party assets and data:** every font, icon, sound, image, word list
-  or dataset has a licence that allows commercial use (no NC or ND, nothing
-  scraped without one), is credited in the product, and share-alike or
-  copyleft data (CC BY-SA, MPL, GPL) stays under its licence, with its
-  source available. Keep an audit table per product and check every new
-  asset against it.
-- **Honest listings:** no claim that can't be backed ("the best", "free"
-  when parts are paid), and no fake, bought or rewarded reviews or ratings.
-- **A lawyer check** of the store listing, names and licences before the
-  first paid release.
+- Follow `LEGAL.md`: published documents (privacy policy, terms, refunds,
+  business details), consent and children, other products' names and
+  looks, third-party assets and data, honest listings, and its release
+  checklist.
 
 ## 10. Docs — always
 

@@ -3,8 +3,10 @@
 It holds the rules that apply to every project, not the code of one.
 
 - `claude/CLAUDE.md`: how to work (always loaded once installed).
-- `claude/guides/`: `SECURITY.md`, `LAUNCH.md`, `UI_UX.md` (read when the
-  task needs them).
+- `claude/guides/`: `SECURITY.md`, `LAUNCH.md`, `UI_UX.md`, `LEGAL.md` (read
+  when the task needs them).
+- `claude/skills/`: agent skills, installed into `~/.claude/skills/`; where
+  each came from is in `claude/skills/SOURCES.md`.
 
 ## In any session
 
@@ -27,3 +29,19 @@ session.
   `AGENTS.md` and `docs/`.
 - A rule a tool can enforce (lint, test, CI) goes into the project's tooling;
   the guide may mention it.
+
+## Third-party skills
+
+- Copy only the files a skill needs (its `SKILL.md` and the files it links
+  to) into `claude/skills/<name>/`, after reading every one of them. Skills
+  are instructions an agent will follow: a file you haven't read is
+  unreviewed code.
+- Never install with `npx skills add`, `npx skills@latest`, or any other
+  installer or script from the source: it pulls whatever is there today,
+  unread, and may run code.
+- Record the source, commit and licence in `claude/skills/SOURCES.md`, and
+  keep the licence file next to the skills. Only licences that allow reuse
+  (MIT, Apache, CC BY…).
+- Take a skill only if it fits the projects' stack; note the ones left out
+  and why. Project rules win over a skill's advice.
+- To update one, read the new version's diff before copying it in.
