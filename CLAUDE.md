@@ -10,6 +10,10 @@ It holds the rules that apply to every project, not the code of one.
 
 ## In any session
 
+In a cloud environment set up with `setup/cloud-setup.sh` (its setup
+script, with this repo under Repositories) the guidelines are installed before
+the first message. Elsewhere:
+
 If `~/.claude/guides/` is missing or older than this repo's copy, run
 `./install.sh`. Then follow the installed `~/.claude/CLAUDE.md`. Cloud
 sessions start in a fresh container, so this is usually needed once per
