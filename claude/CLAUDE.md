@@ -70,6 +70,8 @@ when two rules here conflict.
   subagent on a cheap model review the diff with minimal context: only the
   diff and the rules files. Fix what it finds before pushing. (In prototype
   mode: only security-relevant code, see above.)
+- When the batch changes a screen, the reviewer also gets the screenshots
+  of the worst case (`UI_UX.md` §15): it cannot see layout from code.
 - Large, self-contained pieces of work (a data file, a new screen) may go
   to a subagent with an exact spec. The supervisor stays responsible: check
   its output against the spec and run the checks yourself. Small edits and
@@ -93,3 +95,7 @@ when two rules here conflict.
 - End every piece of work with: what changed, what was checked, what was
   not checked (e.g. "not seen on a real phone"), what is still open, and
   whether testers need a new build.
+- "Not checked" is a list, not a summary: every validation step of the
+  guides that applies to the work (e.g. `UI_UX.md` §15, `SECURITY.md`'s
+  sections, `LEGAL.md` §6) appears in the report, each marked done or not
+  done. A step is never left out silently.

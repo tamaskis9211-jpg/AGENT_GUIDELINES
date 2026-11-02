@@ -244,8 +244,13 @@ How to use it:
 
 ## 15. Validation — before a release
 
-- Look at the real screens: screenshots on real device sizes, light and
-  dark mode, the largest text size. Tests alone don't show what users see.
+- Look at the real screens, every time a screen changes (not only before a
+  release): screenshots in the worst case, the smallest supported width
+  (320 pt/dp) with the largest text size, in light and dark mode, plus one
+  normal-size view. Tests alone don't show what users see.
+- Make it a tool, not a memory: a project script that renders every screen
+  in those conditions, run on every screen change (the project's
+  environment notes say which).
 - A heuristic review with the checklist below.
 - Watch at least one real user try the main flow when you can; fix what
   confuses them first.
