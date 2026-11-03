@@ -29,6 +29,13 @@ when two rules here conflict.
 - Before changing anything, list every file the task touches and read them
   in one pass. Write the plan, then make all the edits, then run the checks
   once per finished batch (re-run only after fixing a failure).
+- Read the project's environment notes before installing, building or
+  running a tool there: the project often has its own way (a mirror, a
+  shared folder, a script).
+- Before building, check that the session can do the whole job: every repo
+  the task changes can be reached, and so can the package registry and any
+  other host the checks need. If not, stop and tell the user what to change
+  (which repos to add, which network setting) before writing any code.
 - New apps, features and game rules start from a brief that the user
   approves before anything is built (see the next section).
 - At a project's start (and before any major upgrade), check the current
@@ -71,6 +78,19 @@ user's decisions, not the agent's.
   image or rendered page of each new or changed screen, with real-looking
   content and the worst case (`UI_UX.md` §15). Get the user's OK on the
   look along with the brief.
+- Every brief item that changes a screen is drawn, or the report says it
+  isn't.
+- After every change to a mockup: render it again, look at it, send the new
+  image and say it replaces the old one (users often look at the first one
+  sent).
+- When the user points at something you can't find, describe what is in
+  that spot and ask. Don't redraw on a guess.
+- Use the user's own wording for labels and texts they gave, exactly.
+- If the work needs a change to a shared contract or library (an SDK, an
+  API, a message format), the brief names it, so it is agreed before
+  building.
+- Every change of mind updates, in the same commit, the brief's behaviour
+  text, its decisions row (who decided, when) and the mockup.
 - Build only after the user approves the brief (and mockups). A major
   decision that comes up mid-build and is not in the brief: stop and ask.
   Small ones: decide, and add them to the brief's "Decided by the agent".
@@ -99,7 +119,44 @@ user's decisions, not the agent's.
 - Look values up in their source (font tables, API docs, config), write a
   tiny test for an assumption, compute examples. Measure twice, do the work
   once.
+- Licences, versions and codepoints come from their primary source (the
+  licence file, the registry, the font's own table), never from memory.
+  Record where you checked.
+- Compute a test's expected values and a brief's worked examples with the
+  real code and data, not from what you believe the rule gives. When a test
+  fails, check the expectation before changing the code.
+- Check a fact in its source before writing it down: what a branch or build
+  contains (git log, import records), what a config does (the config, not a
+  sentence in the docs).
+- Before saying "it works", run the path that fails too: no network, a full
+  disk, a missing tool, a crash halfway.
 - Do not claim a screen looks right without seeing it (screenshot or render).
+
+## Commands and scripts
+- Gate a push, release or deploy on the check's exit code in the same
+  command (`npm run check && git push`), never on reading a log, which may
+  be stale or from another run.
+- Don't push code that hasn't passed the check. If a hook forces a push
+  anyway, say "not run through the check" in the commit message, in the
+  changelog line and to the user.
+- Never kill processes by a pattern that also matches your own command line
+  (`pkill -f`, `pgrep -f … | xargs kill`). Kill by a PID or process group
+  you started and saved.
+- Guard destructive paths: `rm -rf "${DIR:?}/sub"`, never a bare variable.
+- A script that changes shared state for a while (installs packages, edits
+  config) puts it back in `trap` / `finally`, also when it fails, and checks
+  that the restore itself worked.
+- Never edit a file a running process is reading (a shell script mid-run:
+  bash reads as it goes). Wait, or edit a copy and swap it in between runs.
+- Don't run two heavy jobs that share files or the CPU at once (a build and
+  a test run). A timing test that fails under load: re-run it alone, then
+  decide whether it is flaky or real.
+- A repeated manual procedure (a build, a screenshot pass) becomes a script
+  in the repo, with its measured run time in its header.
+- Network workarounds (a blocked host, a rate limit): reproduce the exact
+  failing request, try the fix on it, then rerun the whole job. Expect more
+  than one cause (a redirect can lead back to the blocked host), and check
+  whether filling a tool's list (mirrors, repositories) drops its defaults.
 
 ## Review and delegation
 - After every batch that changes code (not text-only changes), have a
@@ -118,6 +175,13 @@ user's decisions, not the agent's.
   to a subagent with an exact spec. The supervisor stays responsible: check
   its output against the spec and run the checks yourself. Small edits and
   integration stay with the supervisor.
+- Check each reviewer finding against the code before acting on it; some
+  are wrong or go against the user's own choice. Fix the real ones and say
+  why the others were left.
+- Treat each real finding as a class of bug: search for the same mistake
+  elsewhere before fixing the one instance.
+- When a hook asks to push before the review is done, push the work branch
+  only. The main line waits for the review.
 
 ## Mistakes
 - No apologies. Name the gap that let it happen (a missing rule, a missing
@@ -125,6 +189,9 @@ user's decisions, not the agent's.
   line in the project's rules or environment notes, a test, or a checklist
   step. If the cause was simply wrong reasoning, say so plainly and still
   add a guard.
+- A rule that was already written down and still missed goes into a tool, a
+  test or a checklist step that blocks "done". Writing it down again is not
+  a fix.
 
 ## Keeping a project manageable
 - Decisions, rules and open items live in files in the repo, never only in
@@ -135,12 +202,32 @@ user's decisions, not the agent's.
   then internal ones (docs, CI, tooling, tests, refactors) under their own
   heading. Add the line in the same commit as the change. When a build
   ships, rename Unreleased to its number and date.
-- One source of truth per fact; other files link to it.
+- One source of truth per fact; other files link to it. Where a text must
+  exist in several places (app and server copies, store forms), search for
+  every copy and change them all in the same batch, or add a test that they
+  match.
 - If a tool can enforce a rule (lint, test, script), put it there, not in prose.
 - Prefer one session per feature; long sessions lose detail and every step
   re-sends the whole conversation, so cost grows with length. When a feature
-  is done, make sure the repo's open-items file says where things stand, and
-  tell the user it is a good point to start a new session.
+  is done, make sure the repo's open-items file says where things stand;
+  once it is merged (see "Sessions"), tell the user it is a good point to
+  start a new session.
+
+## Sessions
+- A new session starts from the main line; it doesn't see another
+  session's branch.
+- Never suggest starting a new session (or say "a new session can pick
+  this up") until everything on this session's branch is merged into the
+  main line. Before that, say which branch holds the work and offer to open
+  a pull request. Once the user has merged it, check that the main line has
+  it (`git fetch origin main` and compare) before suggesting a new session.
+- If a new session must start before the merge, tell the user to have it
+  work from this session's branch, by name.
+- When more than one session works on a project: take numbers that must be
+  unique (build numbers, versions) from one file on the main line, and push
+  them there.
+- Before building on another session's work, find which branch it was
+  pushed to. Bring in only what you need, and say what you left out.
 
 ## Reporting
 - End every piece of work with: what changed, what was checked, what was

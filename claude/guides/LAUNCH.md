@@ -35,6 +35,12 @@ How to use it:
 
 - **CI on every push:** typecheck, lint, tests, the dependency audit and
   secret scan (`SECURITY.md` §4, §10).
+- **CI costs:** expensive jobs (macOS/iOS, emulators, release builds) run
+  manually or on a schedule, not on every push. They use up the monthly
+  minutes, and then every check stops.
+- **A job that fails within seconds, with no runner and no log,** is the
+  platform or the account (billing, spending limit), not the code. Check
+  the other runs and the billing before touching code.
 - **CD:** deploys come from CI or the platform, never from a laptop.
   Releases are reproducible from a commit.
 - **Staging:** once real users exist, a staging environment (or preview
@@ -138,3 +144,26 @@ How to use it:
   the project's `AGENTS.md` and docs folder (decisions, open items,
   environment, release).
 - Keep them current in the same commit as the change.
+
+## 11. Generated and numbered content — when content is built from lists
+
+- **IDs, puzzle numbers and daily picks** that players can share or save
+  are append-only. A rebuild never renumbers them; the build script refuses
+  to, unless told explicitly.
+- **Freeze anything derived from a list's size** (a daily pool, a cycle
+  length), so adding content later doesn't change past or future days.
+- Invariant tests for the generated data: §1 "Content checks".
+
+## 12. Real-time and multiplayer — when devices talk to each other
+
+- **Replays and duplicates do no harm:** send the full current state of a
+  thing, not a toggle or a delta, and number moves so old ones are ignored.
+- **Timers and deadlines live on one side** (the host or the server).
+  Clients get "time left" and compute a local deadline; a countdown counts
+  from when the deadline was set, not from when the screen opened. Disarm a
+  timer when its phase ends.
+- **A rule that waits for every player** needs an answer for the one who
+  never comes (a timer, removal, or an override). Ask the user which one.
+- **Never ignore a send's result:** queue it, resend on reconnect, confirm
+  it arrived, and undo it with a notice if it didn't (§1 "Slow and broken
+  networks").
