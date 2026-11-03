@@ -39,13 +39,17 @@ How to use it:
   manually or on a schedule, not on every push. They use up the monthly
   minutes, and then every check stops.
 - **A job that fails within seconds, with no runner and no log,** is the
-  platform or the account (billing, spending limit), not the code. Check
-  the other runs and the billing before touching code.
+  platform or the account (billing, spending limit), not the code. The
+  check run's annotations say why. Check the other runs and the billing
+  before touching code.
 - **While CI can't run,** run its checks locally before every push, and
   say that each push wasn't checked on a clean machine: list what CI does
   that the local run doesn't (secret scan, audit, a clean install, platform
   builds). Once CI runs again, read its first result before calling the
   work done.
+- **Each CI job has a local equivalent,** written in the project's
+  environment notes as exact commands (the same pinned tool versions and
+  checksums as CI), so any session can run them when CI can't.
 - **CD:** deploys come from CI or the platform, never from a laptop.
   Releases are reproducible from a commit.
 - **Staging:** once real users exist, a staging environment (or preview

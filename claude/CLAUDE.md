@@ -36,6 +36,10 @@ when two rules here conflict.
   the task changes can be reached, and so can the package registry and any
   other host the checks need. If not, stop and tell the user what to change
   (which repos to add, which network setting) before writing any code.
+- Know what the session may do on the code host: push to the main line,
+  delete or force-push branches. Where it can't, plan for pull requests, and
+  tell the user exactly what is left for them to do by hand (e.g. which
+  merged branches to delete).
 - New apps, features and game rules start from a brief that the user
   approves before anything is built (see the next section).
 - At a project's start (and before any major upgrade), check the current
@@ -153,6 +157,9 @@ user's decisions, not the agent's.
   decide whether it is flaky or real.
 - A repeated manual procedure (a build, a screenshot pass) becomes a script
   in the repo, with its measured run time in its header.
+- When the permission mode refuses a command (downloading or running an
+  outside program, a force-push), don't look for a way around it. Say what
+  it was for, and ask the user to switch the mode or run it themselves.
 - Network workarounds (a blocked host, a rate limit): reproduce the exact
   failing request, try the fix on it, then rerun the whole job. Expect more
   than one cause (a redirect can lead back to the blocked host), and check
@@ -228,6 +235,16 @@ user's decisions, not the agent's.
   them there.
 - Before building on another session's work, find which branch it was
   pushed to. Bring in only what you need, and say what you left out.
+- A commit that one repo records from another (an import, a vendored copy)
+  must be on the source repo's main line. Check it (`git merge-base
+  --is-ancestor`) before importing, or the next import from the main line
+  silently drops it.
+- A branch whose pull request is merged is finished: for new work, start it
+  again from the main line.
+- Merging into the main line needs the user's word; "open and merge" covers
+  both. Several open pull requests that each add a changelog line conflict:
+  merge them one at a time, merging the main line into the next one first
+  (keep both lines, run the check).
 
 ## Reporting
 - End every piece of work with: what changed, what was checked, what was
