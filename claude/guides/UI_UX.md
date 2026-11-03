@@ -150,6 +150,8 @@ How to use it:
   network failure.
 - Accept flexible formats (Postel's law); format as the user types where it
   helps (codes, phone numbers).
+- Normalise text to Unicode NFC before comparing, storing or matching it,
+  and compare with the language's own case rules (not English ones).
 
 ## 7. Navigation and structure — always
 
@@ -255,9 +257,22 @@ How to use it:
   full size and at the size it is shown (an icon at 48 px). Letters in a
   row share one baseline and cap height (accents above it), and no mark
   touches a glyph. Check by measuring the drawn pixels, not by eye alone.
+- In mockups, a temporary state (a vote, a pop-up, a notice) must not look
+  like a permanent control: label it in the caption ("what the others see
+  when…") or show it on its own screen.
+- A web or desktop render is not the phone: native dialogs, some colours
+  and native controls look and behave differently. The report lists what
+  the screenshots can't show.
 - A heuristic review with the checklist below.
 - Watch at least one real user try the main flow when you can; fix what
   confuses them first.
+
+## 16. Locked features — when some features are locked (premium, roles)
+
+- Check the lock at every entry point (deep link, archive, history, back
+  navigation), not only at the button that leads there. Test opening each
+  locked screen directly.
+- Server-side rules for paid features: `SECURITY.md` §1 and §11.
 
 ---
 

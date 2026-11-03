@@ -73,6 +73,9 @@ How to use it:
   paths only.
 - **Request limits:** cap body size, array lengths and string lengths. Avoid
   regexes that can be made to hang (ReDoS).
+- **Text from links, shares or other users:** take one value (not a list
+  where one is expected), normalise it (Unicode NFC), strip control and
+  invisible format characters, and cap its length.
 - **File uploads:** check type by content (not extension), cap size, store
   outside the web root under generated names, never execute them.
 - **Webhooks:** verify the signature and reject replays (timestamp, id).
@@ -146,6 +149,8 @@ How to use it:
   - source maps on production (unless that's intended)
   - debug and admin pages
   - directory listings
+- **Local test servers** listen on `127.0.0.1` only and serve only files
+  inside their own folder.
 - **Framework advisories:** keep frameworks patched. Example: in Next.js,
   never rely on middleware alone for auth; the `x-middleware-subrequest`
   bypass (CVE-2025-29927) skipped it entirely.
