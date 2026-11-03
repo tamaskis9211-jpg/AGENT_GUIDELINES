@@ -41,6 +41,11 @@ How to use it:
 - **A job that fails within seconds, with no runner and no log,** is the
   platform or the account (billing, spending limit), not the code. Check
   the other runs and the billing before touching code.
+- **While CI can't run,** run its checks locally before every push, and
+  say that each push wasn't checked on a clean machine: list what CI does
+  that the local run doesn't (secret scan, audit, a clean install, platform
+  builds). Once CI runs again, read its first result before calling the
+  work done.
 - **CD:** deploys come from CI or the platform, never from a laptop.
   Releases are reproducible from a commit.
 - **Staging:** once real users exist, a staging environment (or preview
