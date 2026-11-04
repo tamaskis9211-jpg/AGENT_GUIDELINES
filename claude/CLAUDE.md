@@ -84,6 +84,10 @@ user's decisions, not the agent's.
   look along with the brief.
 - Every brief item that changes a screen is drawn, or the report says it
   isn't.
+- A restyle across many existing screens (a type or card change everywhere):
+  mock up one representative screen for the decision, then show real
+  renders of every changed screen before anything reaches the main line.
+  Say so in the brief.
 - After every change to a mockup: render it again, look at it, send the new
   image and say it replaces the old one (users often look at the first one
   sent).
@@ -135,6 +139,12 @@ user's decisions, not the agent's.
 - Before saying "it works", run the path that fails too: no network, a full
   disk, a missing tool, a crash halfway.
 - Do not claim a screen looks right without seeing it (screenshot or render).
+- A check tool has blind spots too. When it shows something odd (text that
+  didn't grow, a screen that never loads), find out whether the tool or the
+  app is at fault before fixing either, and fix the tool when it is.
+- An audit finding names where the user meets it. A string in the code is
+  not a defect until it reaches a screen, a log or a message: trace it
+  before listing it.
 
 ## Commands and scripts
 - Gate a push, release or deploy on the check's exit code in the same
@@ -147,6 +157,9 @@ user's decisions, not the agent's.
   (`pkill -f`, `pgrep -f … | xargs kill`). Kill by a PID or process group
   you started and saved.
 - Guard destructive paths: `rm -rf "${DIR:?}/sub"`, never a bare variable.
+- Scripted edits match the exact old text and assert it occurs once. Never
+  edit by line number after other edits to the same file: the lines have
+  moved.
 - A script that changes shared state for a while (installs packages, edits
   config) puts it back in `trap` / `finally`, also when it fails, and checks
   that the restore itself worked.
@@ -164,6 +177,10 @@ user's decisions, not the agent's.
   failing request, try the fix on it, then rerun the whole job. Expect more
   than one cause (a redirect can lead back to the blocked host), and check
   whether filling a tool's list (mirrors, repositories) drops its defaults.
+  A mirror only serves what it mirrors: when the failing artifact isn't
+  there, the tool falls through to the next host in the list, so check
+  where that artifact really lives and put that host before the blocked
+  one.
 
 ## Review and delegation
 - After every batch that changes code (not text-only changes), have a
@@ -223,6 +240,9 @@ user's decisions, not the agent's.
 ## Sessions
 - A new session starts from the main line; it doesn't see another
   session's branch.
+- Start work in any repo from its main line by name
+  (`git fetch origin main && git checkout -B <branch> origin/main`). A
+  clone's default branch can be another session's unmerged work.
 - Never suggest starting a new session (or say "a new session can pick
   this up") until everything on this session's branch is merged into the
   main line. Before that, say which branch holds the work and offer to open
