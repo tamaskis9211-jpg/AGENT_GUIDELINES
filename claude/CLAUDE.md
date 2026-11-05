@@ -120,7 +120,8 @@ user's decisions, not the agent's.
 - You Aren't Gonna Need It: build only what was asked. Never widen scope
   without permission.
 - Do suggest improvements that make sense, in one line each, and let the
-  user decide.
+  user decide. Each one also goes under "Ideas (not agreed)" in the
+  open-items file (below), so it isn't lost with the chat.
 - Every change must be justifiable by the request or a real defect.
 
 ## Measure, don't guess
@@ -220,6 +221,18 @@ user's decisions, not the agent's.
 ## Keeping a project manageable
 - Decisions, rules and open items live in files in the repo, never only in
   chat. Update them in the same commit as the change they describe.
+- Start the open-items file (`docs/OPEN_ITEMS.md`) with the project, in
+  three sections:
+  - **Waiting for the user:** decisions and things only they can do
+    (accounts, details, approvals).
+  - **Known gaps:** bugs, things not checked yet ("not seen on a phone"),
+    tooling problems.
+  - **Ideas (not agreed):** suggestions the user hasn't decided on.
+
+  Each item: dated, a line or a short paragraph, and what closes it. Remove
+  an item when it is done. An idea the user accepts moves to a brief or the
+  task list; one they reject is deleted and noted in the decisions file, so
+  it isn't suggested again.
 - Keep a human-readable `CHANGELOG.md` at the repo root: newest first, one
   section per build or release that reaches testers or users, and
   **Unreleased** on top. Write plain words, user-visible changes first,
