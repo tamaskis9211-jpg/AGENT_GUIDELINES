@@ -24,6 +24,10 @@ when two rules here conflict.
 - The reviewer subagent (below) gets `SECURITY.md` whenever the batch
   touches any of those areas, and `UI_UX.md` (its checklist) whenever the
   batch changes a screen.
+- Before every review by a subagent: read `~/.claude/guides/REVIEW.md` (the
+  prompt template, a second reviewer, keeping score).
+- When reminding the user how to ask (below, "Prompting tips"): the tips
+  are in `~/.claude/guides/PROMPTING.md`.
 
 ## Plan, then act
 - Before changing anything, list every file the task touches and read them
@@ -203,6 +207,11 @@ user's decisions, not the agent's.
 - Check each reviewer finding against the code before acting on it; some
   are wrong or go against the user's own choice. Fix the real ones and say
   why the others were left.
+- Write the reviewer's prompt from `REVIEW.md`'s template, never from
+  scratch. A batch that handles untrusted input, money, auth or saved data
+  gets a second reviewer on a different model as well. Every report gives
+  the reviewer's score (real / wrong / left by choice), and the decisions
+  file keeps the record (`REVIEW.md` §3).
 - Treat each real finding as a class of bug: search for the same mistake
   elsewhere before fixing the one instance.
 - When a hook asks to push before the review is done, push the work branch
@@ -244,6 +253,14 @@ user's decisions, not the agent's.
   every copy and change them all in the same batch, or add a test that they
   match.
 - If a tool can enforce a rule (lint, test, script), put it there, not in prose.
+- Keep a list of every user-facing text the agent writes (app texts, help,
+  privacy and store texts), with where it lives, in one file
+  (`docs/AI_TEXTS.md`), updated in the same commit as the text. Before a
+  release the user reviews that list, so finding every text never needs a
+  hunt through the code.
+- A summary an AI writes from data (feedback, logs, reports) puts the
+  original words or values next to each point, so an invented point stands
+  out.
 - Prefer one session per feature; long sessions lose detail and every step
   re-sends the whole conversation, so cost grows with length. When a feature
   is done, make sure the repo's open-items file says where things stand;
@@ -278,6 +295,27 @@ user's decisions, not the agent's.
   both. Several open pull requests that each add a changelog line conflict:
   merge them one at a time, merging the main line into the next one first
   (keep both lines, run the check).
+
+## Prompting tips — when a request costs an extra round
+The user asked to be reminded how to ask well (`PROMPTING.md`). Remind
+them at these moments, in one line at the end of the reply, naming the tip:
+- **Asking before deciding:** when the questions were needed only because
+  the request left out parts the user knew (who, context, limits, the
+  result wanted): tip 1, or tip 2 when an existing screen or text would
+  have shown it.
+- **A vague bug report** ("it looks off", a screen without the spot): tip 5,
+  after describing what is there and asking (see "Ask before deciding").
+- **A large feature in one message:** tip 3, alongside the brief.
+- **A new request arriving mid-work** without "now" or "queue": tip 6.
+- **Starting a new feature or session:** when the request is still vague,
+  offer tip 4 ("I can ask you questions first").
+
+Rules for the reminders:
+- At most one tip per reply, and each tip at most once per session.
+- Never when the request was already complete, and never instead of doing
+  the work.
+- The user can turn them off ("no tips"); record that in the project's
+  decisions file.
 
 ## Reporting
 - End every piece of work with: what changed, what was checked, what was

@@ -3,7 +3,8 @@
 It holds the rules that apply to every project, not the code of one.
 
 - `claude/CLAUDE.md`: how to work (always loaded once installed).
-- `claude/guides/`: `SECURITY.md`, `LAUNCH.md`, `UI_UX.md`, `LEGAL.md` (read
+- `claude/guides/`: `SECURITY.md`, `LAUNCH.md`, `UI_UX.md`, `LEGAL.md`,
+  `REVIEW.md`, `PROMPTING.md` (read
   when the task needs them).
 - `claude/skills/`: agent skills, installed into `~/.claude/skills/`; where
   each came from is in `claude/skills/SOURCES.md`.
