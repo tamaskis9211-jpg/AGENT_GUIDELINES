@@ -98,6 +98,8 @@ user's decisions, not the agent's.
 - When the user points at something you can't find, describe what is in
   that spot and ask. Don't redraw on a guess.
 - Use the user's own wording for labels and texts they gave, exactly.
+- A choice the user hasn't confirmed stays "asked" in the brief. It is never
+  written as decided in the decisions or open-items file.
 - If the work needs a change to a shared contract or library (an SDK, an
   API, a message format), the brief names it, so it is agreed before
   building.
@@ -132,15 +134,23 @@ user's decisions, not the agent's.
 - Look values up in their source (font tables, API docs, config), write a
   tiny test for an assumption, compute examples. Measure twice, do the work
   once.
-- Licences, versions and codepoints come from their primary source (the
-  licence file, the registry, the font's own table), never from memory.
-  Record where you checked.
+- Licences, versions, codepoints, laws, tax rules and store policies come
+  from their primary source (the licence file, the registry, the font's own
+  table, the authority's or the store's own page), never from memory.
+  Record where and when you checked. A point you couldn't check there is
+  marked "unverified" where it is written.
+- A tool that returns a summary of a page (a fetch that paraphrases) or
+  search excerpts is not the primary source. Say which points rest on it,
+  and list the sources that couldn't be reached.
 - Compute a test's expected values and a brief's worked examples with the
   real code and data, not from what you believe the rule gives. When a test
   fails, check the expectation before changing the code.
 - Check a fact in its source before writing it down: what a branch or build
   contains (git log, import records), what a config does (the config, not a
   sentence in the docs).
+- A status in the docs ("not live", "fixed", "5 advisories") says what was
+  checked and when, and changes in the commit that changes the thing it
+  describes. Check it again before relying on it: statuses go stale.
 - Before saying "it works", run the path that fails too: no network, a full
   disk, a missing tool, a crash halfway.
 - Do not claim a screen looks right without seeing it (screenshot or render).
@@ -162,9 +172,13 @@ user's decisions, not the agent's.
   (`pkill -f`, `pgrep -f … | xargs kill`). Kill by a PID or process group
   you started and saved.
 - Guard destructive paths: `rm -rf "${DIR:?}/sub"`, never a bare variable.
-- Scripted edits match the exact old text and assert it occurs once. Never
-  edit by line number after other edits to the same file: the lines have
-  moved.
+- Scripted edits match the exact old text and assert it occurs once.
+  Anchor on a whole line (`\n## Unreleased\n`), not on a word that can also
+  appear quoted elsewhere. Never edit by line number after other edits to
+  the same file: the lines have moved.
+- A job that runs for hours keeps a progress file in the repo (what is
+  done, the next command), committed after each step, so a restart resumes
+  instead of starting over.
 - A script that changes shared state for a while (installs packages, edits
   config) puts it back in `trap` / `finally`, also when it fails, and checks
   that the restore itself worked.
@@ -213,7 +227,12 @@ user's decisions, not the agent's.
   the reviewer's score (real / wrong / left by choice), and the decisions
   file keeps the record (`REVIEW.md` §3).
 - Treat each real finding as a class of bug: search for the same mistake
-  elsewhere before fixing the one instance.
+  elsewhere before fixing the one instance, including sibling modules and
+  the other repos made from the same template (their code and their config
+  files).
+- Fix a class where every sibling gets the fix: in the shared library, or
+  in a test that runs over all of them. A rule kept in one module's code is
+  forgotten by the next one built.
 - When a hook asks to push before the review is done, push the work branch
   only. The main line waits for the review.
 
@@ -226,6 +245,10 @@ user's decisions, not the agent's.
 - A rule that was already written down and still missed goes into a tool, a
   test or a checklist step that blocks "done". Writing it down again is not
   a fix.
+- A new rule applies to existing code too. When a rule is added to these
+  guidelines, check the existing code of the projects it concerns against
+  it: in the same session for the project it came from, otherwise as a
+  Known gap in each project's open-items file, closed by the check.
 
 ## Keeping a project manageable
 - Decisions, rules and open items live in files in the repo, never only in
@@ -253,6 +276,8 @@ user's decisions, not the agent's.
   every copy and change them all in the same batch, or add a test that they
   match.
 - If a tool can enforce a rule (lint, test, script), put it there, not in prose.
+- Refer to items in files that keep changing by name or ID, never by line
+  number.
 - Keep a list of every user-facing text the agent writes (app texts, help,
   privacy and store texts), with where it lives, in one file
   (`docs/AI_TEXTS.md`), updated in the same commit as the text. Before a
@@ -291,6 +316,9 @@ user's decisions, not the agent's.
   silently drops it.
 - A branch whose pull request is merged is finished: for new work, start it
   again from the main line.
+- Know what a merge deploys. A merge that deploys (a server built from the
+  main line) is a release: its pull request says so, and the docs' status
+  lines change in it.
 - Merging into the main line needs the user's word; "open and merge" covers
   both. Several open pull requests that each add a changelog line conflict:
   merge them one at a time, merging the main line into the next one first

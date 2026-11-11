@@ -11,6 +11,10 @@ How to use it:
   that apply to it, its new-feature checklist and an audit table (below).
   This guide is the general source; the product file links here.
 - Privacy and data rules live in `SECURITY.md` §12; this file links to them.
+- An AI-written legal or tax note gives each point its source and the date
+  it was read, and marks what rests on excerpts or memory (`CLAUDE.md`,
+  "Measure, don't guess"). It is a pre-check for the lawyer or the tax
+  adviser, never a replacement.
 
 ---
 
@@ -23,6 +27,10 @@ How to use it:
   Apple; the listing and the terms say so).
 - **Business details:** the developer's name, contact and address where the
   store or the law asks (Play for paid apps; the EU for traders).
+- **The seller's legal form** (sole trader, company) and its tax
+  registration come before the store accounts: the stores ask for trader
+  status and the payout identity. Decide it with the user and a tax
+  adviser.
 - **Store forms** (data safety, privacy labels, age ratings) match the policy
   and the code.
 
@@ -33,8 +41,15 @@ How to use it:
 - **Children:** choose the target age on purpose. Under 13 (16 in parts of
   the EU) brings parental consent and the stores' family rules; say the age
   in the store forms.
+- **One audience per product:** content for children and adult content in
+  one product sets the age rating for both. Decide the audience before
+  adding either.
 - **Account and data deletion** that users can do themselves (required by
   the app stores for apps with accounts); `SECURITY.md` §12.
+- **Users' text sent to an AI provider:** only under business terms with a
+  data processing agreement (the provider's API or commercial terms), never
+  a consumer plan. Say so where the user types it, and get their consent
+  there (Apple 5.1.2(i)); name the provider in the privacy policy.
 
 ## 3. Other products' names and looks — always
 
@@ -43,7 +58,8 @@ How to use it:
   - **Name:** our own. Never another product's name in the product, the
     store listing, screenshots, links or ads ("like X" included). Put a name
     check in the tests where the texts live, and add a name to it whenever
-    a new feature is inspired by another product.
+    a new feature is inspired by another product. Ids that ship count too:
+    package ids, link schemes, URLs.
   - **Look:** not the other product's signature colours, layout or
     animation.
   - **Content:** our own puzzles, texts and data, never copied from it.
@@ -68,6 +84,9 @@ How to use it:
 ## 5. Honest listings — whenever the product is described
 
 - No claim that can't be backed ("the best", "free" when parts are paid).
+- No promise that binds the product for its whole life ("no ads, ever",
+  "every future game included") unless the user decides to keep it that
+  long. Say what is true now ("currently").
 - No fake, bought or rewarded reviews or ratings.
 - Prices and what is free are clear before the user commits (`UI_UX.md`
   §14).
@@ -75,6 +94,9 @@ How to use it:
 ## 6. Before a release
 
 - [ ] Documents in §1 published and current; store forms match.
+- [ ] The privacy policy and the store forms cover the platform's own flows
+      (cloud backup, crash reports) and every server that is live, checked
+      on the server, not in the notes.
 - [ ] The name check passes; no other product's name or look.
 - [ ] Every asset credited, with a licence that allows commercial use;
       share-alike data published under its licence.

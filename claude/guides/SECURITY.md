@@ -112,8 +112,19 @@ How to use it:
   to run up your bill.
 - **Denial of wallet** (serverless, AI APIs): spending caps and billing alerts
   on every paid service.
-- **Shareable codes and links:** enough randomness, plus rate limits on
+- **Shareable codes and links:** enough randomness from a secure source
+  (the platform's crypto API, never `Math.random`), plus rate limits on
   looking them up, so they can't be brute-forced.
+- **Count what one sender can do,** not only how fast:
+  - limit how many records one address creates (rooms, links) and how many
+    entries it adds to a shared list, so one script can't fill it for
+    everyone;
+  - keep counters across reconnects (per key or seat, not per connection);
+  - count IPv6 per /64 (one home line), not per address.
+- **Free plans** stop instead of billing: there the attack is using up the
+  day's quota for everyone. Pick the limits from measured honest use, and
+  ask the user whether an unreachable counter lets requests through or
+  blocks them.
 
 ## 6. Data stores — when there is a database or file storage
 
@@ -133,7 +144,7 @@ How to use it:
 ## 7. Web and HTTP — when serving pages or APIs to browsers
 
 - **HTTPS everywhere,** with HSTS.
-- **Security headers:**
+- **Security headers,** on every page and endpoint, the public ones too:
   - `Content-Security-Policy` (including `frame-ancestors` against clickjacking,
     or `X-Frame-Options: DENY`)
   - `X-Content-Type-Options: nosniff`
@@ -198,7 +209,11 @@ How to use it:
 - **Deep links and app links** are untrusted input: validate every parameter;
   never perform an action from a link without confirmation.
 - **Push notifications and device logs:** no sensitive content.
-- **Android:** no exported components left open; review backup settings.
+- **Android:** no exported components left open.
+- **Platform defaults are data flows.** Android's auto backup is on by
+  default and copies app data to the user's Google account (iCloud does the
+  same on iPhone). Decide on or off with the user; the privacy policy and
+  the store forms say what was chosen (`LEGAL.md` §6).
 - **In-app purchases:** on-device verification can be defeated on rooted or
   jailbroken phones. Decide and write down whether server-side receipt
   validation is worth it.

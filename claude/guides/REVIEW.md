@@ -73,3 +73,18 @@ Two examples of the expected form:
 - When more than about a third of a reviewer's findings are wrong over
   three batches, tell the user, and suggest a stronger model or a better
   prompt. Base that suggestion on these numbers, not on one bad review.
+
+## 4. A full review — when the user asks for a review of the whole product
+
+- Report only: the reviewer writes only in its review folder and changes no
+  code, so its findings can be trusted as a snapshot (name the commits).
+- Each finding gets an ID, a severity, where it is, the proof (by running,
+  or "read only") and who must act (the agent, or the user first).
+- Known open items are re-checked, not re-reported: a known item that is
+  worse or out of date is marked as an update to that item.
+- A verification pass at the end re-runs the most severe findings, and a
+  second reviewer on a different model tries to disprove them.
+- A progress file with the next step lets the review resume after a
+  restart (`CLAUDE.md`, "Commands and scripts").
+- Afterwards, every finding is filed in the open-items file by its ID, and
+  each fix's commit and pull request name the ID it closes.
