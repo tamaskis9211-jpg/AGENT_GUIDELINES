@@ -8,8 +8,10 @@ score. (Adapted from the ISTQB CT-GenAI syllabus v1.1: structured prompts
 ## 1. The reviewer prompt — every review
 
 Fill in this template; don't write a new prompt from scratch. Put the diffs,
-the guide sections that apply and the screenshots in files, and give the
-reviewer only that folder.
+the whole changed files (as they are after the change), the guide sections
+that apply and the screenshots in files, and give the reviewer only that
+folder. A diff alone hides the checks the code already makes around it,
+which is where most wrong findings come from.
 
 ```
 Role: you review one batch of changes for real defects, not style.
@@ -20,6 +22,8 @@ follow.> Read ONLY the files in <folder>; don't explore the repos.
 
 Input:
 - <name>.diff — <what it holds; what to ignore, e.g. vendored copies>
+- files/ — the whole changed files after the change: read them before
+  reporting that a check is missing
 - <guide>.md — the rules that apply (only these sections)
 - <screenshots>.png — the worst case (when a screen changed)
 
