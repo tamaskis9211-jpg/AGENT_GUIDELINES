@@ -11,7 +11,7 @@ UI/UX guide.
 | `claude/guides/LAUNCH.md` | Launch checklist: testing, delivery, observability, data, states, web/SEO, email, AI features, legal, docs | when planning a project and before a release |
 | `claude/guides/UI_UX.md` | UI/UX: identity first, principles and laws, layout, interaction, forms, navigation, states, accessibility, content, ethics, a review checklist | before building or changing screens |
 | `claude/guides/LEGAL.md` | Licences, other products' names and looks, store texts | when planning a product, adding assets or data, writing store texts, before a release |
-| `claude/guides/REVIEW.md` | Reviews by a subagent: the prompt template with examples, a second reviewer on another model, keeping the reviewer's score | before every review |
+| `claude/guides/REVIEW.md` | Reviews by a subagent: the prompt template with examples, a second reviewer on another model, keeping the reviewer's score, a full review of a whole product | before every review |
 | `claude/guides/PROMPTING.md` | How the user can ask the agent well (nine tips); the agent reminds them at set moments | when a request costs an extra round |
 
 ## Install

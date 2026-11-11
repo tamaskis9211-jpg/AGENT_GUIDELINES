@@ -8,8 +8,10 @@ score. (Adapted from the ISTQB CT-GenAI syllabus v1.1: structured prompts
 ## 1. The reviewer prompt — every review
 
 Fill in this template; don't write a new prompt from scratch. Put the diffs,
-the guide sections that apply and the screenshots in files, and give the
-reviewer only that folder.
+the whole changed files (as they are after the change), the guide sections
+that apply and the screenshots in files, and give the reviewer only that
+folder. A diff alone hides the checks the code already makes around it,
+which is where most wrong findings come from.
 
 ```
 Role: you review one batch of changes for real defects, not style.
@@ -20,6 +22,8 @@ follow.> Read ONLY the files in <folder>; don't explore the repos.
 
 Input:
 - <name>.diff — <what it holds; what to ignore, e.g. vendored copies>
+- files/ — the whole changed files after the change: read them before
+  reporting that a check is missing
 - <guide>.md — the rules that apply (only these sections)
 - <screenshots>.png — the worst case (when a screen changed)
 
@@ -73,3 +77,18 @@ Two examples of the expected form:
 - When more than about a third of a reviewer's findings are wrong over
   three batches, tell the user, and suggest a stronger model or a better
   prompt. Base that suggestion on these numbers, not on one bad review.
+
+## 4. A full review — when the user asks for a review of the whole product
+
+- Report only: the reviewer writes only in its review folder and changes no
+  code, so its findings can be trusted as a snapshot (name the commits).
+- Each finding gets an ID, a severity, where it is, the proof (by running,
+  or "read only") and who must act (the agent, or the user first).
+- Known open items are re-checked, not re-reported: a known item that is
+  worse or out of date is marked as an update to that item.
+- A verification pass at the end re-runs the most severe findings, and a
+  second reviewer on a different model tries to disprove them.
+- A progress file with the next step lets the review resume after a
+  restart (`CLAUDE.md`, "Commands and scripts").
+- Afterwards, every finding is filed in the open-items file by its ID, and
+  each fix's commit and pull request name the ID it closes.

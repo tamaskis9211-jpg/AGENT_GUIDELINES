@@ -50,15 +50,26 @@ How to use it:
 - **Each CI job has a local equivalent,** written in the project's
   environment notes as exact commands (the same pinned tool versions and
   checksums as CI), so any session can run them when CI can't.
+- **Make it one script** that runs every CI step in order (a clean install
+  from the lockfile, the checks, the audit, the secret scan) and prints
+  "NOT RUN: <step>" for any step it can't do. Gate the push on its exit
+  code. A list of commands gets run partly, or after the push.
 - **CD:** deploys come from CI or the platform, never from a laptop.
   Releases are reproducible from a commit.
 - **Staging:** once real users exist, a staging environment (or preview
   deploys) with its own data and keys, used before production.
 - **Rollback:** see `SECURITY.md` §8. Know the exact command or button
-  before you need it.
+  before you need it: try it once before launch, and write the steps down.
 - **Mobile:** a staged rollout on the stores; tester builds before store
   builds; old app versions keep working with the server (version the API
   and messages).
+- **Store ids** (Android package name, iOS bundle id) can't change after the
+  first store upload. Settle them, and rename any that carry another
+  product's name, while only testers exist.
+- **Before opening the store accounts,** read the store's own setup guides
+  against the project's store notes. They ask for things the notes may lack
+  (rating questionnaires, account verification on a real device, a default
+  release to other device types).
 - **Domain:** a custom domain with SSL (automatic renewal), redirects
   between `www` and the bare domain, HSTS (`SECURITY.md` §7).
 
@@ -85,6 +96,10 @@ How to use it:
 - **Indexes** for the main queries; check query plans before traffic grows.
 - **Migrations:** versioned and reversible; saved formats versioned, with old
   data migrated or rejected clearly.
+- **Damaged saved data** (on a device or a server): a failed or unreadable
+  read never leaves the product loading forever. Start fresh, keep the
+  unreadable data aside, and never let a write after a failed read replace
+  it. Test every store with damaged data, in one test over all of them.
 - **Spending caps and billing alerts:** `SECURITY.md` §5.
 
 ## 5. States and UX — always, for anything with a screen
@@ -139,6 +154,14 @@ How to use it:
   inputs; handle "context too long" and cut-off output on purpose.
 - **Cost:** a cap per user and per day (`SECURITY.md` §5); the cheaper model
   for simple steps.
+- **Summaries of users' text** (feedback, messages):
+  - remove contact details (emails, phone numbers) before sending;
+  - no tools for the model; validate its answer against a schema;
+  - check every quote against the source text, and drop one that isn't
+    there;
+  - one input the model refuses or that breaks the call is retried alone,
+    so it can't keep the whole batch out;
+  - the provider's terms and the user's consent: `LEGAL.md` §2.
 
 ## 9. Legal and privacy — when there are users
 
@@ -161,6 +184,13 @@ How to use it:
   to, unless told explicitly.
 - **Freeze anything derived from a list's size** (a daily pool, a cycle
   length), so adding content later doesn't change past or future days.
+  Numbered days read frozen data (a checked-in list in its order, or the
+  puzzles themselves), never the live list.
+- **Pin it in a test:** a few days (the first, today, one years away) with
+  their expected content, and the frozen file's size and hash.
+- **Content picked by code** from a large dataset (hints, neighbours, words
+  of the day) is filtered against a blocklist the user approves. Check the
+  whole pool by script, not a sample.
 - Invariant tests for the generated data: §1 "Content checks".
 
 ## 12. Real-time and multiplayer — when devices talk to each other

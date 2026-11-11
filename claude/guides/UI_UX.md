@@ -252,7 +252,15 @@ How to use it:
   normal-size view. Tests alone don't show what users see.
 - Make it a tool, not a memory: a project script that renders every screen
   in those conditions, run on every screen change (the project's
-  environment notes say which).
+  environment notes say which). The tool enforces its own coverage:
+  - it fails when a screen (route) has no screenshot, with an explicit skip
+    list for routes that only redirect;
+  - each shot checks that it shows the screen it is named after (a marker
+    text), so a redirect can't pass as that screen;
+  - the worst case forces the state under test (a seeded draw, a fixture),
+    rather than hoping a random run reaches it;
+  - default and placeholder names are worst-case names too (they are often
+    the longest).
 - Look at every drawn image (app or game icon, mockup, illustration) at
   full size and at the size it is shown (an icon at 48 px). Letters in a
   row share one baseline and cap height (accents above it), and no mark
@@ -272,6 +280,9 @@ How to use it:
 - Check the lock at every entry point (deep link, archive, history, back
   navigation), not only at the button that leads there. Test opening each
   locked screen directly.
+- A locked **mode of a free screen** counts too (an archive day opens the
+  same play screen as today's): the screen checks the mode. Test it the way
+  a link arrives, with the lock on.
 - Server-side rules for paid features: `SECURITY.md` §1 and §11.
 
 ---
