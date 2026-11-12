@@ -33,6 +33,13 @@ when two rules here conflict.
 - Before changing anything, list every file the task touches and read them
   in one pass. Write the plan, then make all the edits, then run the checks
   once per finished batch (re-run only after fixing a failure).
+- Write the plan as steps, each with the check that will prove it done (a
+  test, a command, a screenshot), and state the assumptions it rests on. An
+  assumption you can't check is a question for the user.
+- When a simpler way would meet the need, or the request would cause a
+  problem, say so before building, with the trade-off; the user decides.
+- When something is unclear (a request, a rule, a result), stop, say
+  exactly what is unclear, and ask. Don't build on a guess.
 - Read the project's environment notes before installing, building or
   running a tool there: the project often has its own way (a mirror, a
   shared folder, a script).
@@ -129,6 +136,16 @@ user's decisions, not the agent's.
   user decide. Each one also goes under "Ideas (not agreed)" in the
   open-items file (below), so it isn't lost with the chat.
 - Every change must be justifiable by the request or a real defect.
+- Write the least code that does the job: no abstraction for code used
+  once, no option or setting nobody asked for, no handling for cases that
+  can't happen (no network, a full disk and bad input can: handle those). If
+  it could be much shorter, rewrite it before the review.
+- Touch only what the task or a real defect needs. Don't reformat,
+  re-comment or "improve" the code around it, don't refactor what works,
+  and match the file's existing style even where you'd write it differently.
+- Remove what your own change left unused (imports, variables, functions).
+  Dead code that was already there: mention it (an idea, above), don't
+  delete it.
 
 ## Measure, don't guess
 - Look values up in their source (font tables, API docs, config), write a
@@ -145,6 +162,8 @@ user's decisions, not the agent's.
 - Compute a test's expected values and a brief's worked examples with the
   real code and data, not from what you believe the rule gives. When a test
   fails, check the expectation before changing the code.
+- Fix a bug by first writing a test (or a check) that fails on it, then make
+  it pass. A refactor keeps the same tests passing before and after.
 - Check a fact in its source before writing it down: what a branch or build
   contains (git log, import records), what a config does (the config, not a
   sentence in the docs).

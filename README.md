@@ -6,7 +6,7 @@ UI/UX guide.
 
 | File | What | Loaded |
 |---|---|---|
-| `claude/CLAUDE.md` | How to work: plan first, a visible queue, no scope creep, measure don't guess, review by a second agent, mistakes become rule fixes, reporting | every session (user-level) |
+| `claude/CLAUDE.md` | How to work: plan first, a visible queue, no scope creep, the least code and surgical changes, measure don't guess, review by a second agent, mistakes become rule fixes, reporting | every session (user-level) |
 | `claude/guides/SECURITY.md` | Security checklist: authorization, accounts, input, secrets, abuse and cost, data, web, infrastructure, errors, dependencies, mobile, privacy, incidents | before security-relevant work |
 | `claude/guides/LAUNCH.md` | Launch checklist: testing, delivery, observability, data, states, web/SEO, email, AI features, legal, docs | when planning a project and before a release |
 | `claude/guides/UI_UX.md` | UI/UX: identity first, principles and laws, layout, interaction, forms, navigation, states, accessibility, content, ethics, a review checklist | before building or changing screens |
