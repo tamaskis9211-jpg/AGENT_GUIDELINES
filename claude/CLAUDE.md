@@ -13,7 +13,8 @@ when two rules here conflict.
 - When planning a new project, and before a release: read
   `~/.claude/guides/LAUNCH.md`.
 - Before building or changing any screen, page or flow: read
-  `~/.claude/guides/UI_UX.md`.
+  `~/.claude/guides/UI_UX.md`. Before making an image (a scene, an
+  illustration, an icon) with code or a model: its §17.
 - When planning a product, adding a third-party asset or dataset, writing
   store or marketing texts, and before a release: read
   `~/.claude/guides/LEGAL.md`.

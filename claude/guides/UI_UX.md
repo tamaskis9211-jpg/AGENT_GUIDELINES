@@ -285,6 +285,55 @@ How to use it:
   a link arrives, with the lock on.
 - Server-side rules for paid features: `SECURITY.md` §1 and §11.
 
+## 17. Images the agent makes — when the agent draws or generates art (scenes, illustrations, icons) with code or a model
+
+- **Before matching a reference look,** find out how the reference was
+  made (its notes, the asset register, the commit) and say so. Don't
+  assume it was made the way you plan to make yours.
+- **Samples first:** show the method on one subject, in the real screen,
+  before making every variant (every stage, age or size). The user picks.
+- **Describe a scene as a place, not as screen positions.** Give every
+  object a position on the ground (or in 3D), a footprint and a height, and
+  project everything through one camera. Then:
+  - draw back to front from one depth-sorted list of all objects, never
+    "all of one kind, then all of another" (people end up on top of the
+    tents they stand behind);
+  - draw anything that moves (flames, smoke) between the layer behind it
+    and the layer in front of it, never on top of the finished picture;
+  - take light and shadow from real distances: light falls off with
+    distance, and a shadow is where something blocks the light.
+- **Prefer a method that is right by construction** when realism matters:
+  a renderer that sorts by depth and lights the scene. A hand-placed 2D
+  picture needs every check below.
+- **The image script checks what it can and stops on a problem:**
+  - objects standing in water, off the ground, or cut by the frame;
+  - footprints that overlap;
+  - draw order that is not back to front;
+  - the number of objects each variant should have.
+
+  It runs the check for every variant before painting anything. Test the
+  check once with a known defect (an object in the water, one inside
+  another) and see it fail. A check written for a first draft goes stale
+  when sizes or positions change; keep it computed from the real sizes.
+- **Look closely:** the script also saves full-size crops of every busy
+  area (where objects meet) for every variant. Look at each one; a
+  scaled-down contact sheet hides overlaps (§15: full size and shown size).
+- When a colour looks wrong, measure the pixels before changing it: it may
+  only be the contrast with what is around it.
+- **Reproducible:** fixed seeds; the scene code and the script live in the
+  repo, with the command and measured run time in the script's header.
+  The same command makes the same picture.
+- **Loops:** every moving part completes a whole number of cycles per loop,
+  so the last frame meets the first. "Slow" means a long loop and small
+  movements. With Reduce Motion on, show the still picture.
+- **Size:** measure one variant in the final format and multiply by the
+  number of variants before choosing between full animated frames and a
+  still plus a few moving layers.
+- **A third-party renderer or generator:** read what you run (at least scan
+  it for network and process calls), pin the exact version, and make the
+  script refuse any other version. A model or service that generates
+  images: `LEGAL.md` §4.
+
 ---
 
 ## Review checklist (for the reviewer and before a release)
@@ -311,3 +360,5 @@ Based on Nielsen's 10 heuristics plus the states:
 11. **States:** are loading, empty, error, offline and success all designed?
 12. **Accessibility:** are contrast, labels, large text, targets of 44/48 and
     Reduce Motion all covered?
+13. **Made images:** does the image script check layout and draw order for
+    every variant, and were full-size crops looked at (§17)?

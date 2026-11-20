@@ -80,6 +80,16 @@ How to use it:
   The product's own code is not affected.
 - Keep an **audit table** per product (asset or feature, inspired by, name,
   look, content and licence, status) and check every new asset against it.
+- **AI-made assets** (images, sounds or texts a model or the agent made):
+  - whether they may ship is the user's decision, recorded in the
+    project's decisions file;
+  - the tool's terms must allow commercial use;
+  - the audit table records the tool, the prompt or the code, and the date;
+  - output made from prompts alone may not be protected by copyright, so
+    others may copy it (US Copyright Office, "Copyright and Artificial
+    Intelligence, Part 2: Copyrightability", 29 Jan 2025; checked 20 Nov
+    2026). Human choices in it (placement, edits) can change that.
+  How to make and check images: `UI_UX.md` §17.
 
 ## 5. Honest listings — whenever the product is described
 
