@@ -314,10 +314,12 @@ How to use it:
     clearly in view or not placed there;
   - the number of objects each variant should have.
 
-  It runs the check for every variant before painting anything. Test the
-  check once with a known defect (an object in the water, one inside
-  another) and see it fail. A check written for a first draft goes stale
-  when sizes or positions change; keep it computed from the real sizes.
+  It runs the check for every variant before painting anything. Each run
+  first feeds every check a known defect (an object in the water, one
+  inside another, a reversed draw order) and stops if one passes: a check
+  fed constant values passes everything and looks the same as a good
+  result. A check written for a first draft goes stale when sizes or
+  positions change; keep it computed from the real sizes.
 - **Look closely:** the script also saves full-size crops of every busy
   area (where objects meet) for every variant. Look at each one; a
   scaled-down contact sheet hides overlaps (§15: full size and shown size).
