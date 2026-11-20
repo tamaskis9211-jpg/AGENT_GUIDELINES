@@ -309,6 +309,9 @@ How to use it:
   - objects standing in water, off the ground, or cut by the frame;
   - footprints that overlap;
   - draw order that is not back to front;
+  - a figure mostly hidden behind something nearer (a head peeking past an
+    edge reads as an error even when the depth is right): each one is
+    clearly in view or not placed there;
   - the number of objects each variant should have.
 
   It runs the check for every variant before painting anything. Test the
