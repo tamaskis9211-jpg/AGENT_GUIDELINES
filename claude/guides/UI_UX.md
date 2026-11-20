@@ -306,8 +306,10 @@ How to use it:
   a renderer that sorts by depth and lights the scene. A hand-placed 2D
   picture needs every check below.
 - **The image script checks what it can and stops on a problem:**
-  - objects standing in water, off the ground, or cut by the frame;
-  - footprints that overlap;
+  - objects standing in water, off the ground, cut by the frame, or inside
+    the screen areas the UI covers (a HUD, panels);
+  - footprints that overlap, tested on the shape actually painted (a
+    building's rectangle, not a circle round it);
   - draw order that is not back to front;
   - a figure mostly hidden behind something nearer (a head peeking past an
     edge reads as an error even when the depth is right): each one is
