@@ -311,9 +311,11 @@ How to use it:
   - footprints that overlap, tested on the shape actually painted (a
     building's rectangle, not a circle round it);
   - draw order that is not back to front;
-  - a figure mostly hidden behind something nearer (a head peeking past an
-    edge reads as an error even when the depth is right): each one is
-    clearly in view or not placed there;
+  - a figure or a light source (a fire, a lamp) mostly hidden behind
+    something nearer (a head peeking past an edge, or a glow with no fire,
+    reads as an error even when the depth is right): each one is clearly
+    in view or not placed there. Check it both ways: when the hidden thing
+    is placed, and when something is placed in front of it later;
   - the number of objects each variant should have.
 
   It runs the check for every variant before painting anything. Each run
