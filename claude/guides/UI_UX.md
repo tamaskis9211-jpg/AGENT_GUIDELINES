@@ -135,7 +135,11 @@ How to use it:
   - purposeful: it shows where things come from and go, and gives feedback;
   - 150–300 ms, with easing;
   - respects Reduce Motion;
-  - never blocks input.
+  - never blocks input;
+  - reviewed with `~/.claude/skills/review-animations/` (its `SKILL.md` and
+    `STANDARDS.md`): a brief's motion spec before the brief is approved,
+    and the code whenever it adds or changes motion. The project's own
+    motion rules win where they differ.
 
 ## 6. Forms and input — when there are inputs
 
@@ -311,3 +315,5 @@ Based on Nielsen's 10 heuristics plus the states:
 11. **States:** are loading, empty, error, offline and success all designed?
 12. **Accessibility:** are contrast, labels, large text, targets of 44/48 and
     Reduce Motion all covered?
+13. **Motion:** was every new or changed animation (spec or code) reviewed
+    with `review-animations` (§5), and its findings fixed or answered?
