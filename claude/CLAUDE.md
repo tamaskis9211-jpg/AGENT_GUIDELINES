@@ -21,6 +21,10 @@ when two rules here conflict.
   `claude/skills/SOURCES.md`). Never install a skill with `npx skills add` or
   another installer: copy only the files it needs, after reading them, into
   that repo.
+- When a task matches one of those skills, follow it, even when it isn't in
+  your skill list: a skill marked `disable-model-invocation` (e.g.
+  `review-animations`) can't be called as a Skill, so read its `SKILL.md`
+  and the files it links to, and apply them.
 - The reviewer subagent (below) gets `SECURITY.md` whenever the batch
   touches any of those areas, and `UI_UX.md` (its checklist) whenever the
   batch changes a screen.
