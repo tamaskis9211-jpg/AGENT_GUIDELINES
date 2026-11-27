@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Procedural art demo</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; color: #ddd; font: 14px system-ui, sans-serif; }
+  body { display: grid; place-items: center; }
+  canvas { image-rendering: pixelated; display: block; }
+  #error { padding: 16px; max-width: 40em; }
+</style>
+</head>
+<body>
+<canvas></canvas>
+<div id="error" hidden></div>
+<script type="module">
+// Demo of the procedural-2d-art kit. Serve this folder over http (modules do
+// not load from file://), e.g. through bake.mjs, and open
+//   demo.html?view=iso|topdown&look=dusk|winter|day&seed=N&size=640x360
+//   demo.html?only=house|tower|tree|rock&look=dusk   (one sprite, transparent background)
+//   add &still to render one frame (no flicker loop), &zoom=N to scale,
+//   &buffer=albedo|normal|height|bump|emit|shadow to see one raw buffer (for debugging the light).
+import { Art, noise } from './procgen.js';
+import { createRenderer } from './render.js';
+
+// A look is all the data that makes a land or an age: colours by name, light, cover and grade.
+const LOOKS = {
+  dusk: {
+    colors: { grass: '#4c5a38', dirt: '#5e4b39', stone: '#7d808a', brick: '#8c6a52', plaster: '#b6a588', wood: '#7a5838', roof: '#71402f', thatch: '#9c8450', leaf: '#46613a', pine: '#33503e', bark: '#45362a', cobble: '#8a8276', rock: '#6e717b', metal: '#555a64', flame: '#ffb24a', window: '#ffc870', water: '#1c2a3a' },
+    clear: '#0a0c14', sky: [0.05, 0.065, 0.13], groundLight: [0.025, 0.02, 0.025],
+    sun: { dir: [-0.35, 0.8, 0.5], color: [0.3, 0.38, 0.68] }, lightScale: 1, cover: null, trees: ['broad', 'broad', 'pine'],
+    grade: { exposure: 1.5, saturation: 0.92, vignette: 0.55, lift: [0.008, 0.012, 0.03], levels: 28, grain: 0.03, glow: 0.7, bump: 1.6, emit: 2.5 },
+  },
+  winter: {
+    colors: { grass: '#56605e', dirt: '#4a4644', stone: '#7a8496', brick: '#7c6a62', plaster: '#a8a8a8', wood: '#6a5040', roof: '#5a3a34', thatch: '#8a7a5a', leaf: '#3d5248', pine: '#2c4a44', bark: '#3a302c', cobble: '#7e828a', rock: '#727a88', metal: '#5a6070', flame: '#ffb24a', window: '#ffc870', water: '#2a4458' },
+    clear: '#0c1220', sky: [0.09, 0.12, 0.2], groundLight: [0.04, 0.045, 0.06],
+    sun: { dir: [-0.35, 0.8, 0.5], color: [0.38, 0.48, 0.78] }, lightScale: 1, cover: { color: '#dfe7f2', amount: 0.72 }, trees: ['pine'],
+    grade: { exposure: 1.35, saturation: 0.85, vignette: 0.5, lift: [0.01, 0.016, 0.034], levels: 28, grain: 0.03, glow: 0.7, bump: 1.4, emit: 2.5 },
+  },
+  day: {
+    colors: { grass: '#6e8a44', dirt: '#8a6c4a', stone: '#9a9aa0', brick: '#a8704e', plaster: '#e0d2b0', wood: '#8a6440', roof: '#a04a32', thatch: '#c8a860', leaf: '#5a8a3c', pine: '#3e6a44', bark: '#5a4432', cobble: '#a49c8e', rock: '#8a8a90', metal: '#6a707a', flame: '#ffb24a', window: '#30343c', water: '#3a6a8a' },
+    clear: '#9cc4e4', sky: [0.32, 0.38, 0.5], groundLight: [0.14, 0.12, 0.09],
+    sun: { dir: [-0.45, 0.8, 0.4], color: [1.35, 1.2, 1.0] }, lightScale: 0.1, cover: null, trees: ['broad', 'broad', 'pine'],
+    grade: { exposure: 1.15, saturation: 1.0, vignette: 0.3, lift: [0.0, 0.004, 0.012], levels: 32, grain: 0.02, glow: 0.3, bump: 1.2, emit: 0.4 },
+  },
+};
+const TAU = Math.PI * 2;
+
+// ---------- objects: each is a few primitives, coloured from the look ----------
+function house(art, rng, x, z, rot) {
+  const m = art.object([x, 0, z]), c = Math.cos(rot), s = Math.sin(rot);
+  const at = (lx, lz) => [x + lx * c + lz * s, z - lx * s + lz * c];
+  const w = rng.range(1.6, 2.1), d = rng.range(1.3, 1.6), h = rng.range(1.0, 1.25);
+  const wall = rng() < 0.5 ? art.style('plaster', 'plaster') : art.style('brick', 'brick');
+  m.box(x, 0, z, w + 0.12, 0.22, d + 0.12, art.style('stone', 'brick'), { rot });
+  m.box(x, 0.22, z, w, h, d, wall, { rot });
+  const [dx, dz] = at(0, d / 2 + 0.03);
+  m.box(dx, 0.22, dz, 0.38, 0.68, 0.06, art.style('wood', 'planks', { ao: null }), { rot });
+  for (const side of [-1, 1]) {
+    const [wx, wz] = at((side * w) / 4 + (side > 0 ? 0.1 : -0.1), d / 2 + 0.03);
+    m.box(wx, 0.22 + h * 0.45, wz, 0.26, 0.24, 0.05, art.style('window', 'plain', { ao: null, emit: 0.9 }), { rot });
+  }
+  const [lx, lz] = at(0, d / 2 + 0.6);
+  art.light([lx, 0.7, lz], art.look.colors.window, 1.8, 3.5);
+  const roofMat = rng() < 0.6 ? 'shingles' : 'thatch';
+  m.roof(x, 0.22 + h, z, w, d, rng.range(0.75, 1.0), art.style(roofMat === 'thatch' ? 'thatch' : 'roof', roofMat, { ao: null }), { rot, gable: wall });
+  const [cx, cz] = at(w * 0.28, -d * 0.18);
+  m.box(cx, 0.22 + h + 0.2, cz, 0.22, 0.75, 0.22, art.style('stone', 'brick', { ao: null }), { rot });
+}
+function tower(art, x, z) {
+  const m = art.object([x, 0, z]);
+  m.prism(x, 0, z, 0.72, 2.1, art.style('stone', 'brick', { ao: [1.4, 0.5] }), { sides: 6, top: 0.8 });
+  m.box(x, 2.1, z, 1.5, 0.14, 1.5, art.style('wood', 'planks'));
+  for (const [a, b] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) m.box(x + a * 0.66, 2.24, z + b * 0.66, 0.1, 0.5, 0.1, art.style('wood', 'planks'));
+  m.prism(x, 2.24, z, 0.24, 0.22, art.style('metal', 'metal'), { sides: 8, top: 1.3 });
+  m.ball(x, 2.62, z, 0.16, art.style('flame', 'plain', { ao: null, emit: 1, cover: false }), { sq: 1.9, rings: 3, seg: 5 });
+  art.light([x, 2.95, z], art.look.colors.flame, 9, 10);
+}
+function tree(art, rng, x, z, kind) {
+  const m = art.object([x, 0, z]), k = rng.range(0.85, 1.2);
+  if (kind === 'pine') {
+    m.prism(x, 0, z, 0.12 * k, 0.6 * k, art.style('bark', 'planks'), { sides: 5, top: 0.7 });
+    for (let i = 0; i < 3; i++) m.prism(x, (0.35 + i * 0.55) * k, z, (0.8 - i * 0.18) * k, 1.0 * k, art.style('pine', 'leaves'), { sides: 7, top: 0, rot: rng() * TAU });
+  } else {
+    m.prism(x, 0, z, 0.15 * k, 1.1 * k, art.style('bark', 'planks'), { sides: 5, top: 0.6 });
+    for (let i = 0; i < 3; i++) m.ball(x + rng.range(-0.3, 0.3) * k, (1.35 + i * 0.22) * k, z + rng.range(-0.3, 0.3) * k, rng.range(0.5, 0.7) * k, art.style('leaf', 'leaves'), { rough: 0.2, seg: 6 });
+  }
+}
+function rock(art, rng, x, z) {
+  const r = rng.range(0.22, 0.5);
+  art.object([x, 0, z]).ball(x, r * 0.3, z, r, art.style('rock', 'rock'), { rough: 0.35, sq: 0.75, rings: 3, seg: 6, floor: 0 });
+}
+function lamp(art, x, z) {
+  const m = art.object([x, 0, z]);
+  m.box(x, 0, z, 0.09, 1.25, 0.09, art.style('wood', 'planks'));
+  m.box(x, 1.25, z, 0.2, 0.22, 0.2, art.style('flame', 'plain', { ao: null, emit: 0.9, cover: false }));
+  m.prism(x, 1.47, z, 0.17, 0.14, art.style('metal', 'metal', { ao: null }), { sides: 4, top: 0, rot: Math.PI / 4 });
+  art.light([x, 1.4, z], art.look.colors.flame, 4, 6);
+}
+function barrel(art, x, z) { art.object([x, 0, z]).prism(x, 0, z, 0.2, 0.42, art.style('wood', 'planks'), { sides: 8 }); }
+function crate(art, rng, x, z) { art.object([x, 0, z]).box(x, 0, z, 0.42, 0.42, 0.42, art.style('wood', 'planks'), { rot: rng() * 0.6 }); }
+
+// ---------- the scene: a ground slab, a road, a plaza, buildings and scenery ----------
+function scene(art, rng) {
+  const R = 7, taken = [];
+  const free = (x, z, r) => Math.abs(x) < R - r && Math.abs(z) < R - r && taken.every(([tx, tz, tr]) => Math.hypot(tx - x, tz - z) > tr + r);
+  const place = (r, x0, z0, spread) => { // a free spot near x0, z0, searching wider on each try; null if none
+    for (let i = 0; i < 80; i++) {
+      const s = spread * (1 + i / 10), x = x0 + rng.range(-s, s), z = z0 + rng.range(-s, s);
+      if (free(x, z, r)) { taken.push([x, z, r]); return [x, z]; }
+    }
+    return null;
+  };
+  const g = art.ground(), ground = { ao: null };
+  g.box(0, -1.2, 0, 2 * R, 1.2, 2 * R, art.style('dirt', 'dirt', ground), { top: art.style('grass', 'grass', ground) });
+  for (let i = 0; i < 7; i++) { // bare patches with noisy edges
+    const cx = rng.range(-R + 1.5, R - 1.5), cz = rng.range(-R + 1.5, R - 1.5), r = rng.range(0.5, 1.3), sd = rng() * 50;
+    g.poly(Array.from({ length: 12 }, (_, k) => { const a = (k / 12) * TAU, rr = r * (0.7 + 0.6 * noise(Math.cos(a) * 1.5 + sd, Math.sin(a) * 1.5, 3)); return [cx + Math.cos(a) * rr, cz + Math.sin(a) * rr]; }), 0, art.style('dirt', 'dirt', ground));
+  }
+  const road = art.style('cobble', 'cobble', ground), disc = (x, z, r, n = 10) => Array.from({ length: n }, (_, k) => [x + Math.cos((k / n) * TAU) * r, z + Math.sin((k / n) * TAU) * r]);
+  const path = [[-R, rng.range(-2, 2)], [-3.5, rng.range(-1.5, 1.5)], [0, 0], [3.5, rng.range(-1.5, 1.5)], [R, rng.range(-2, 2)]];
+  for (let i = 0; i < path.length - 1; i++) {
+    const [x0, z0] = path[i], [x1, z1] = path[i + 1], len = Math.hypot(x1 - x0, z1 - z0), nx = (-(z1 - z0) / len) * 0.6, nz = ((x1 - x0) / len) * 0.6;
+    const edge = (v) => Math.max(-R, Math.min(R, v)); // keep the road on the slab
+    g.poly([[x0 + nx, z0 + nz], [x1 + nx, z1 + nz], [x1 - nx, z1 - nz], [x0 - nx, z0 - nz]].map(([x, z]) => [edge(x), edge(z)]), 0, road);
+    if (i > 0) g.poly(disc(x0, z0, 0.6), 0, road);
+    for (let t = 0; t <= 1; t += 0.1) taken.push([x0 + (x1 - x0) * t, z0 + (z1 - z0) * t, 0.75]);
+  }
+  g.poly(disc(0, 0, 1.9, 12), 0, road);
+  taken.push([0, 0, 1.9]);
+  const well = art.object([0, 0, 0]);
+  well.prism(0, 0, 0, 0.45, 0.5, art.style('stone', 'brick'), { sides: 8, cap: art.style('water', 'plain', { ao: null, cover: false }) });
+  const a0 = rng() * TAU;
+  for (let i = 0; i < 3; i++) { const a = a0 + (i * TAU) / 3, p = place(1.4, Math.cos(a) * 3.8, Math.sin(a) * 3.8, 0.4); if (p) house(art, rng, p[0], p[1], Math.atan2(-p[0], -p[1])); }
+  const tw = place(0.9, Math.cos(a0 + TAU / 6) * 3.4, Math.sin(a0 + TAU / 6) * 3.4, 0.4); if (tw) tower(art, tw[0], tw[1]);
+  for (const i of [1, 3]) { const p = place(0.3, path[i][0], path[i][1] + 1.0, 0.2); if (p) lamp(art, p[0], p[1]); }
+  for (let i = 0; i < 5; i++) { const p = place(0.3, 0, 0, 2.5); if (p) (i & 1 ? barrel(art, p[0], p[1]) : crate(art, rng, p[0], p[1])); }
+  for (let i = 0; i < 16; i++) { const p = place(0.7, 0, 0, R / 1.5); if (p) tree(art, rng, p[0], p[1], rng.pick(art.look.trees)); }
+  for (let i = 0; i < 12; i++) { const p = place(0.4, 0, 0, R / 1.5); if (p) rock(art, rng, p[0], p[1]); }
+}
+
+// ---------- page ----------
+const q = new URLSearchParams(location.search);
+let canvas = document.querySelector('canvas');
+try {
+  const lookName = q.get('look') ?? 'dusk', look = Object.hasOwn(LOOKS, lookName) ? LOOKS[lookName] : null;
+  if (!look) throw new Error(`unknown look "${lookName}"; known: ${Object.keys(LOOKS).join(', ')}`);
+  const only = q.get('only'), [w, h] = (q.get('size') ?? (only ? '96x128' : '640x360')).split('x').map(Number);
+  if (!(w > 0 && h > 0)) throw new Error('size must look like 640x360');
+  const art = new Art({ width: w, height: h, view: q.get('view') ?? 'iso', look, seed: Number(q.get('seed') ?? 1) });
+  const t0 = performance.now();
+  if (only) {
+    const makers = { house: () => house(art, art.rng, 0, 0, 0), tower: () => tower(art, 0, 0), tree: () => tree(art, art.rng, 0, 0, look.trees[0]), rock: () => rock(art, art.rng, 0, 0) };
+    const make = Object.hasOwn(makers, only) ? makers[only] : null;
+    if (!make) throw new Error(`unknown sprite "${only}"; known: house, tower, tree, rock`);
+    make();
+  } else scene(art, art.rng);
+  art.fit([...art.groundModels, ...art.objects].flatMap((m) => m.faces.flatMap((f) => f.pts)), only ? 4 : 10);
+  art.draw();
+  const buffer = q.get('buffer');
+  if (buffer) { // show a raw buffer instead of the lit picture
+    if (!Object.hasOwn(art.buf, buffer)) throw new Error(`unknown buffer "${buffer}"; known: ${Object.keys(art.buf).join(', ')}`);
+    const raw = Object.assign(document.createElement('canvas'), { width: w, height: h });
+    raw.getContext('2d').drawImage(art.buf[buffer].canvas, 0, 0);
+    canvas.replaceWith(raw); canvas = raw;
+  }
+  const renderer = buffer ? null : createRenderer(canvas);
+  renderer?.render(art, 0, { alphaOut: !!only });
+  window.artStats = { faces: [...art.groundModels, ...art.objects].reduce((s, m) => s + m.faces.length, 0), lights: art.lights.length, ms: Math.round(performance.now() - t0) };
+  const zoom = Number(q.get('zoom')) || Math.max(1, Math.floor(Math.min(innerWidth / w, innerHeight / h)));
+  canvas.style.width = `${w * zoom}px`; canvas.style.height = `${h * zoom}px`;
+  window.artDone = true;
+  if (renderer && !q.has('still')) { const loop = (t) => { renderer.render(art, t / 1000, { alphaOut: !!only }); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
+} catch (e) {
+  const box = document.getElementById('error');
+  box.textContent = e.message; box.hidden = false; canvas.hidden = true;
+  window.artError = e.message;
+}
+</script>
+</body>
+</html>
