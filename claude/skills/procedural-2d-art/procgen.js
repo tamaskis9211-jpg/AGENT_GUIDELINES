@@ -13,6 +13,7 @@ const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
 const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
 const norm = (a) => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
 const rgbStr = (c) => `rgb(${c.map((v) => clamp01(v) * 255).join(',')})`;
+const own = (obj, key) => (Object.hasOwn(obj, key) ? obj[key] : undefined); // names from outside never reach Object.prototype
 
 /** Seeded random numbers in [0, 1): the same seed always gives the same art. */
 export function makeRng(seed) {
@@ -156,7 +157,7 @@ const tiles = new Map();
 function cached(key, make) { let t = tiles.get(key); if (!t) tiles.set(key, (t = make())); return t; }
 function materialData(mat) {
   return cached('data:' + mat, () => {
-    const f = MATERIALS[mat];
+    const f = own(MATERIALS, mat);
     if (!f) throw new Error(`unknown material "${mat}"; known: ${Object.keys(MATERIALS).join(', ')}`);
     const m = new Float32Array(TILE * TILE), h = new Float32Array(TILE * TILE);
     for (let y = 0; y < TILE; y++) for (let x = 0; x < TILE; x++) [m[y * TILE + x], h[y * TILE + x]] = f(x, y);
@@ -308,8 +309,9 @@ export class Art {
    * @param {number} [o.texelsPerUnit] texture density; default: one texel per pixel at the fitted scale
    */
   constructor({ width, height, view = 'iso', look, seed = 1, texelsPerUnit }) {
-    const v = typeof view === 'string' ? VIEWS[view] : view;
+    const v = typeof view === 'string' ? own(VIEWS, view) : view;
     if (!v) throw new Error(`unknown view "${view}"; known: ${Object.keys(VIEWS).join(', ')}`);
+    if (Math.abs(v.a[0] * v.b[2] - v.a[2] * v.b[0]) < 1e-6) throw new Error('the view must show x and z apart: a.x * b.z - a.z * b.x is 0');
     this.a = v.a; this.b = v.b; this.d = norm(cross(v.b, v.a)); // d points toward the camera
     this.w = width; this.h = height; this.look = look; this.tpu = texelsPerUnit;
     this.rng = makeRng(seed); this.scale = 16; this.ox = width / 2; this.oy = height / 2;
@@ -329,7 +331,7 @@ export class Art {
   }
   /** A style: a look colour (varied by +-jitter), a material, and options. */
   style(colour, mat = 'plain', { jitter = 0.07, ao = [1, 0.6], emit = 0, cover = true } = {}) {
-    const hex = this.look.colors[colour];
+    const hex = own(this.look.colors, colour);
     if (!hex) throw new Error(`the look has no colour "${colour}"`);
     const k = 1 + (this.rng() * 2 - 1) * jitter;
     return { color: hexRgb(hex).map((v) => v * k), mat, ao, emit, cover, uo: Math.floor(this.rng() * TILE), vo: Math.floor(this.rng() * TILE) };
@@ -346,7 +348,8 @@ export class Art {
     for (const ctx of Object.values(this.buf)) ctx.clearRect(0, 0, this.w, this.h);
     for (const m of this.groundModels) this.#model(m, tpu);
     // cast shadows: every face of every object, pushed along the sun onto the ground (y = 0)
-    const L = norm(this.look.sun.dir), ly = Math.max(L[1], 0.2), sh = this.buf.shadow;
+    const L = norm(this.look.sun.dir), ly = L[1], sh = this.buf.shadow;
+    if (ly < 0.2) throw new Error('look.sun.dir must point upward (y >= 0.2 once normalised): a lower sun casts shadows off the map');
     sh.fillStyle = sh.strokeStyle = '#fff';
     for (const m of this.objects) if (m.castShadow) for (const f of m.faces) {
       if (f.pts.every((p) => p[1] <= 1e-3)) continue;

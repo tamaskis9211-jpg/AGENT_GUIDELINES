@@ -144,14 +144,15 @@ function scene(art, rng) {
 const q = new URLSearchParams(location.search);
 let canvas = document.querySelector('canvas');
 try {
-  const lookName = q.get('look') ?? 'dusk', look = LOOKS[lookName];
+  const lookName = q.get('look') ?? 'dusk', look = Object.hasOwn(LOOKS, lookName) ? LOOKS[lookName] : null;
   if (!look) throw new Error(`unknown look "${lookName}"; known: ${Object.keys(LOOKS).join(', ')}`);
   const only = q.get('only'), [w, h] = (q.get('size') ?? (only ? '96x128' : '640x360')).split('x').map(Number);
   if (!(w > 0 && h > 0)) throw new Error('size must look like 640x360');
   const art = new Art({ width: w, height: h, view: q.get('view') ?? 'iso', look, seed: Number(q.get('seed') ?? 1) });
   const t0 = performance.now();
   if (only) {
-    const make = { house: () => house(art, art.rng, 0, 0, 0), tower: () => tower(art, 0, 0), tree: () => tree(art, art.rng, 0, 0, look.trees[0]), rock: () => rock(art, art.rng, 0, 0) }[only];
+    const makers = { house: () => house(art, art.rng, 0, 0, 0), tower: () => tower(art, 0, 0), tree: () => tree(art, art.rng, 0, 0, look.trees[0]), rock: () => rock(art, art.rng, 0, 0) };
+    const make = Object.hasOwn(makers, only) ? makers[only] : null;
     if (!make) throw new Error(`unknown sprite "${only}"; known: house, tower, tree, rock`);
     make();
   } else scene(art, art.rng);
@@ -159,7 +160,7 @@ try {
   art.draw();
   const buffer = q.get('buffer');
   if (buffer) { // show a raw buffer instead of the lit picture
-    if (!art.buf[buffer]) throw new Error(`unknown buffer "${buffer}"; known: ${Object.keys(art.buf).join(', ')}`);
+    if (!Object.hasOwn(art.buf, buffer)) throw new Error(`unknown buffer "${buffer}"; known: ${Object.keys(art.buf).join(', ')}`);
     const raw = Object.assign(document.createElement('canvas'), { width: w, height: h });
     raw.getContext('2d').drawImage(art.buf[buffer].canvas, 0, 0);
     canvas.replaceWith(raw); canvas = raw;

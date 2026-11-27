@@ -61,8 +61,9 @@ guessing: render, look, adjust.
   along `d = b × a`; a face is visible when `n · d > 0`, and drawing goes
   far to near by `p · d`.
 - `iso: a = (1, 0, −1), b = (0.5, −1.2, 0.5)`: a 1 × 1 tile is a 2:1
-  diamond; tops and two sides show. `b.y` sets how tall things look (1.22
-  is a true orthographic isometric; 1.0–1.2 is common in pixel art).
+  diamond; tops and two sides show. `b.y` sets how tall things look:
+  √1.5 ≈ 1.22 makes it an exact orthographic view (dimetric, camera 30°
+  above the ground); 1.0–1.2 is common in pixel art.
 - `topdown: a = (1, 0, 0), b = (0, −0.6, 0.8)`: a 3/4 view from the south;
   tops and south faces show, east and west faces are edge-on. Lower
   `−0.6` toward 0 for a flatter map view (walls vanish at 0, and so does
@@ -84,8 +85,9 @@ guessing: render, look, adjust.
   normal is turned away from the centre given).
 - Faces are flat-shaded on purpose: the facets are the look. Keep counts
   low: prisms 5–8 sides, balls 3–4 rings × 5–7 segments, rocks 3 × 6 with
-  `rough` 0.3–0.4. About 2,000 faces made the demo village, drawn in
-  120–190 ms in headless Chromium.
+  `rough` 0.3–0.4. About 2,000 faces made the demo village, built and
+  drawn in 120–190 ms (headless Chromium in a cloud container, measured
+  27 Nov 2026 with `bake.mjs`, which prints the time per render).
 - A recipe is a function `(art, rng, x, z, ...)` that opens one
   `art.object([x, 0, z])` and stacks shapes. The demo's recipes are short:
   - house: stone footing box, wall box (plaster or brick), door box, two
@@ -105,8 +107,9 @@ guessing: render, look, adjust.
 - Placement: keep a list of taken circles and search outward from a wanted
   spot (`place` in `demo.html`). Place in order of importance: roads and
   plazas, buildings, light sources, props, trees, rocks.
-- Recipes take their numbers as options with defaults, so the game's
-  content files can vary them (house width, roof kind, tree height).
+- Give a project's recipes their numbers as options with defaults, so the
+  game's content files can vary them (house width, roof kind, tree height).
+  The demo's recipes draw these at random inside, to stay short.
 
 ## 5. The six buffers — when debugging or extending the light
 
@@ -136,8 +139,8 @@ guessing: render, look, adjust.
   cast shadow. `sun.dir` points toward the light. Lighting the left
   isometric faces and darkening the right ones reads best (dir
   ≈ (−0.35, 0.8, 0.5)). Shadows are the objects' faces pushed along the
-  sun onto y = 0 and softened by a 3 × 3 blur. Keep `dir.y ≥ 0.2`, or the
-  shadows run off the map.
+  sun onto y = 0 and softened by a 3 × 3 blur. `dir.y` below 0.2 (once
+  normalised) throws an error: a lower sun casts shadows off the map.
 - **Point lights:** `intensity × flicker / (1 + d²)`, faded to 0 between
   0.6 and 1.0 of `radius`, times `max(n · L, 0)`. The 1 + d² keeps a light
   from blowing out what is next to it. Flicker is two sines of time per
@@ -242,8 +245,8 @@ screen) makes the scene read as a miniature.
 ## 11. Running in a game — when generating at runtime
 
 - Build and draw the static world once (load time: the demo's ~2,000 faces
-  take 120–190 ms in desktop headless Chromium; measure on the target
-  phone), then only `render()` per frame.
+  take 120–190 ms in headless Chromium in a cloud container; measure on
+  the target phone), then only `render()` per frame.
 - Keep the internal resolution low (≤ 640 × 360 or 360 × 640): the light
   pass runs once per pixel with up to 32 lights.
 - WebGL2 is missing on some old devices and in some test browsers:
