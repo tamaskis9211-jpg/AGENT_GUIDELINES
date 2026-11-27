@@ -177,6 +177,22 @@ user's decisions, not the agent's.
 - Before saying "it works", run the path that fails too: no network, a full
   disk, a missing tool, a crash halfway.
 - Do not claim a screen looks right without seeing it (screenshot or render).
+- Before drawing or generating a picture with things in it (game art, a
+  scene, a mockup with figures), take an inventory. Count each kind of
+  object, and write down where each one stands: on its own (position,
+  size) and relative to the others (on what ground, in front of or behind
+  what, how far from water and the frame's edge). With a reference
+  picture, take its inventory first.
+- Place things by logic, as they would stand in the world:
+  - nothing stands in water unless it floats or wades;
+  - solid things don't stand on each other's footprints;
+  - a figure is never drawn on top of a tent, a wall or a house, nor
+    behind one and visible through it: what is in front hides what is
+    behind, fully;
+  - people and animals stand on open ground, clear of fires.
+- Put those rules in a placement check in the scene code. It stops the
+  render and names the object, and a test proves each rule fires. After
+  rendering, count again on the image.
 - A check tool has blind spots too. When it shows something odd (text that
   didn't grow, a screen that never loads), find out whether the tool or the
   app is at fault before fixing either, and fix the tool when it is.
